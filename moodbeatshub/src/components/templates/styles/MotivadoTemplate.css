@@ -1,0 +1,874 @@
+.motivado-container {
+  min-height: 100vh;
+  background: linear-gradient(145deg, #1a0305, #0d0102);
+  padding-left: 0;
+  transition: padding-left 0.3s ease;
+}
+
+.motivado-container.sidebar-open {
+  padding-left: 220px;
+}
+
+/* Header */
+.motivado-header {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem;
+  gap: 2rem;
+}
+
+.motivado-header .back-button {
+  background: linear-gradient(145deg, #1f0406, #140204);
+  color: #9a031e;
+  border: 1px solid rgba(154, 3, 30, 0.3);
+  padding: 0.9rem 1.8rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    6px 6px 14px rgba(0, 0, 0, 0.7),
+    -3px -3px 8px rgba(40, 10, 15, 0.1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-header .back-button:hover {
+  background: linear-gradient(145deg, #140204, #0f0102);
+  box-shadow: 
+    inset 3px 3px 8px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 6px rgba(40, 10, 15, 0.1),
+    0 0 15px rgba(154, 3, 30, 0.3);
+  border-color: rgba(154, 3, 30, 0.5);
+  transform: translateY(-2px);
+}
+
+.motivado-header .back-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 6px 6px 14px rgba(0, 0, 0, 0.8),
+    inset -3px -3px 8px rgba(40, 10, 15, 0.1);
+}
+
+.motivado-header .mood-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: linear-gradient(145deg, #1f0406, #140204);
+  padding: 1.2rem 2rem;
+  border-radius: 20px;
+  flex: 1;
+  box-shadow: 
+    inset 5px 5px 15px rgba(0, 0, 0, 0.7),
+    inset 8px 8px 20px rgba(0, 0, 0, 0.6),
+    inset -3px -3px 10px rgba(40, 10, 15, 0.15);
+  border: 1px solid rgba(154, 3, 30, 0.2);
+}
+
+.motivado-header .mood-emoji {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  animation: power-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes power-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.motivado-header .mood-text h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #9a031e;
+  margin: 0;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 12px rgba(154, 3, 30, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.motivado-header .mood-text p {
+  font-size: 0.95rem;
+  color: #d5b9b2;
+  margin: 0.3rem 0 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-header .user-badge {
+  background: linear-gradient(145deg, #1f0406, #140204);
+  padding: 1rem 1.8rem;
+  border-radius: 18px;
+  box-shadow: 
+    inset 4px 4px 12px rgba(0, 0, 0, 0.7),
+    inset 6px 6px 18px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 8px rgba(40, 10, 15, 0.1);
+  border: 1px solid rgba(154, 3, 30, 0.15);
+}
+
+.motivado-header .user-badge span {
+  color: #ece2d0;
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Main Content */
+.motivado-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+
+.motivado-main .welcome-card {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2.5rem;
+  background: linear-gradient(145deg, #220507, #180304);
+  border-radius: 24px;
+  box-shadow: 
+    3px 3px 6px rgba(0, 0, 0, 0.5),
+    6px 6px 12px rgba(0, 0, 0, 0.6),
+    8px 8px 16px rgba(0, 0, 0, 0.7),
+    12px 12px 24px rgba(0, 0, 0, 0.8),
+    16px 16px 32px rgba(0, 0, 0, 0.85),
+    20px 20px 40px rgba(0, 0, 0, 0.9),
+    -2px -2px 4px rgba(60, 15, 25, 0.25),
+    -4px -4px 8px rgba(50, 12, 20, 0.3),
+    -6px -6px 12px rgba(45, 11, 18, 0.35),
+    -8px -8px 18px rgba(40, 10, 15, 0.4);
+  border: 1px solid rgba(100, 25, 35, 0.3);
+  border-bottom: 1px solid rgba(10, 2, 4, 0.5);
+  border-right: 1px solid rgba(10, 2, 4, 0.5);
+  border-top: 1px solid rgba(120, 30, 40, 0.4);
+  border-left: 1px solid rgba(120, 30, 40, 0.4);
+  position: relative;
+  transform: translateZ(0);
+}
+
+.motivado-main .welcome-card h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #9a031e 0%, #d62828 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.motivado-main .welcome-card p {
+  font-size: 1.15rem;
+  color: #d5b9b2;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ====================================
+   🎵 GENERATE SECTION - PLAYLIST GENERATION
+   ==================================== */
+.motivado-main .generate-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.motivado-main .generate-card {
+  background: linear-gradient(145deg, #1a0a0d 0%, #250b10 100%);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.8),
+    0 6px 12px rgba(0, 0, 0, 0.7),
+    inset 0 1px 2px rgba(214, 40, 40, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(154, 3, 30, 0.3);
+  border-top: 1px solid rgba(214, 40, 40, 0.2);
+  border-left: 1px solid rgba(214, 40, 40, 0.2);
+  transition: all 0.3s ease;
+}
+
+.motivado-main .generate-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 16px 32px rgba(0, 0, 0, 0.85),
+    0 8px 16px rgba(0, 0, 0, 0.75),
+    inset 0 1px 2px rgba(214, 40, 40, 0.2),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.motivado-main .generate-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.motivado-main .generate-icon {
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(135deg, #9a031e 0%, #d62828 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 
+    0 6px 16px rgba(154, 3, 30, 0.6),
+    0 3px 8px rgba(154, 3, 30, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.motivado-main .generate-card:hover .generate-icon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 
+    0 8px 20px rgba(154, 3, 30, 0.7),
+    0 4px 10px rgba(154, 3, 30, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.motivado-main .generate-text h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #9a031e 0%, #d62828 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.motivado-main .generate-text p {
+  font-size: 1rem;
+  color: #d5b9b2;
+  opacity: 0.9;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-main .generate-button {
+  width: 100%;
+  padding: 1.3rem 2rem;
+  background: linear-gradient(135deg, #9a031e 0%, #d62828 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  box-shadow: 
+    0 6px 16px rgba(154, 3, 30, 0.5),
+    0 3px 8px rgba(154, 3, 30, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.motivado-main .generate-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  transition: all 0.5s ease;
+}
+
+.motivado-main .generate-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 20px rgba(154, 3, 30, 0.6),
+    0 4px 10px rgba(154, 3, 30, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.motivado-main .generate-button:hover::before {
+  left: 100%;
+}
+
+.motivado-main .generate-button:active {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 10px rgba(154, 3, 30, 0.5),
+    0 2px 5px rgba(154, 3, 30, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.motivado-main .generate-button:disabled {
+  background: linear-gradient(135deg, #3d0a12 0%, #4d1018 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.motivado-main .generate-button span:first-child {
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.motivado-main .spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ====================================
+   ✅ GENERATED PLAYLIST CARD
+   ==================================== */
+.motivado-main .generated-playlist-card {
+  background: linear-gradient(145deg, #1a0a0d 0%, #250b10 100%);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.8),
+    0 6px 12px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(154, 3, 30, 0.25),
+    inset 0 1px 2px rgba(214, 40, 40, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(154, 3, 30, 0.4);
+  border-top: 1px solid rgba(214, 40, 40, 0.3);
+  border-left: 1px solid rgba(214, 40, 40, 0.3);
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.motivado-main .generated-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(154, 3, 30, 0.3);
+}
+
+.motivado-main .success-badge {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 
+    0 4px 8px rgba(34, 197, 94, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.motivado-main .generated-time {
+  font-size: 0.85rem;
+  color: #d5b9b2;
+  opacity: 0.7;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-main .generated-content {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.motivado-main .generated-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #9a031e 0%, #d62828 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  box-shadow: 
+    0 6px 16px rgba(154, 3, 30, 0.5),
+    0 3px 8px rgba(154, 3, 30, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+.motivado-main .generated-info h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  background: linear-gradient(135deg, #9a031e 0%, #d62828 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.motivado-main .generated-info p {
+  font-size: 0.95rem;
+  color: #d5b9b2;
+  opacity: 0.85;
+  margin-bottom: 0.8rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-main .generated-meta {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #d5b9b2;
+  opacity: 0.7;
+}
+
+.motivado-main .generated-meta span {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-main .generated-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.motivado-main .spotify-button,
+.motivado-main .regenerate-button {
+  flex: 1;
+  min-width: 180px;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.motivado-main .spotify-button {
+  background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+  color: white;
+  box-shadow: 
+    0 4px 12px rgba(29, 185, 84, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.motivado-main .spotify-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 16px rgba(29, 185, 84, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+.motivado-main .regenerate-button {
+  background: linear-gradient(145deg, #1a0a0d 0%, #250b10 100%);
+  color: #9a031e;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(214, 40, 40, 0.15);
+  border: 1px solid rgba(154, 3, 30, 0.4);
+}
+
+.motivado-main .regenerate-button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(145deg, #200d10 0%, #2d0f15 100%);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(214, 40, 40, 0.2);
+}
+
+.motivado-main .regenerate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Playlists Grid */
+.motivado-main .playlists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.motivado-main .playlist-card {
+  background: linear-gradient(145deg, #1f0406, #140204);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  cursor: pointer;
+  border: 1px solid rgba(154, 3, 30, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    8px 8px 20px rgba(0, 0, 0, 0.8),
+    12px 12px 35px rgba(0, 0, 0, 0.7),
+    -4px -4px 12px rgba(40, 10, 15, 0.15);
+}
+
+.motivado-main .playlist-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #9a031e, #d62828);
+  opacity: 0;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 15px #9a031e;
+}
+
+.motivado-main .playlist-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: #9a031e;
+  box-shadow: 
+    12px 16px 30px rgba(0, 0, 0, 0.9),
+    16px 20px 50px rgba(0, 0, 0, 0.8),
+    -6px -6px 18px rgba(50, 12, 20, 0.2),
+    0 0 25px rgba(154, 3, 30, 0.3);
+}
+
+.motivado-main .playlist-card:hover::before {
+  opacity: 1;
+  height: 5px;
+}
+
+.motivado-main .playlist-card:active {
+  transform: translateY(-4px) scale(0.98);
+  box-shadow: 
+    6px 8px 15px rgba(0, 0, 0, 0.8),
+    8px 10px 25px rgba(0, 0, 0, 0.7),
+    -3px -3px 10px rgba(40, 10, 15, 0.15);
+}
+
+.motivado-main .playlist-icon {
+  font-size: 3rem;
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #220507, #180304);
+  border-radius: 16px;
+  box-shadow: 
+    inset 3px 3px 8px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 6px rgba(40, 10, 15, 0.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: all 0.3s ease;
+}
+
+.motivado-main .playlist-card:hover .playlist-icon {
+  transform: scale(1.1);
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.5),
+    inset -1px -1px 4px rgba(50, 12, 20, 0.15),
+    0 0 12px rgba(154, 3, 30, 0.2);
+}
+
+.motivado-main .playlist-content {
+  flex: 1;
+  text-align: left;
+}
+
+.motivado-main .playlist-content h3 {
+  color: #ece2d0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    1px 1px 2px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+}
+
+.motivado-main .playlist-card:hover .playlist-content h3 {
+  color: #9a031e;
+  text-shadow: 
+    2px 2px 6px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(154, 3, 30, 0.3);
+}
+
+.motivado-main .playlist-description {
+  color: #d5b9b2;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  opacity: 0.85;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  transition: opacity 0.3s ease;
+}
+
+.motivado-main .playlist-card:hover .playlist-description {
+  opacity: 1;
+}
+
+.motivado-main .playlist-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #a89888;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.motivado-main .meta-divider {
+  opacity: 0.5;
+}
+
+.motivado-main .play-button {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #9a031e, #d62828);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #ffffff;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(154, 3, 30, 0.2);
+  transition: all 0.3s ease;
+}
+
+.motivado-main .playlist-card:hover .play-button {
+  transform: scale(1.15);
+  box-shadow: 
+    6px 6px 15px rgba(0, 0, 0, 0.7),
+    -3px -3px 8px rgba(154, 3, 30, 0.3),
+    0 0 20px rgba(154, 3, 30, 0.4);
+}
+
+.motivado-main .play-button span {
+  margin-left: 3px;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+/* Stats Section */
+.motivado-main .stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.motivado-main .stat-card {
+  background: linear-gradient(145deg, #1f0406, #140204);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid rgba(154, 3, 30, 0.2);
+  box-shadow: 
+    8px 8px 20px rgba(0, 0, 0, 0.8),
+    12px 12px 35px rgba(0, 0, 0, 0.7),
+    -4px -4px 12px rgba(40, 10, 15, 0.15);
+  transition: all 0.3s ease;
+}
+
+.motivado-main .stat-card:hover {
+  transform: translateY(-4px);
+  border-color: #9a031e;
+  box-shadow: 
+    10px 12px 25px rgba(0, 0, 0, 0.85),
+    14px 16px 40px rgba(0, 0, 0, 0.75),
+    -5px -5px 15px rgba(50, 12, 20, 0.2),
+    0 0 20px rgba(154, 3, 30, 0.25);
+}
+
+.motivado-main .stat-icon {
+  font-size: 3rem;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #220507, #180304);
+  border-radius: 16px;
+  box-shadow: 
+    inset 3px 3px 8px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 6px rgba(40, 10, 15, 0.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.motivado-main .stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.motivado-main .stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #9a031e;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(154, 3, 30, 0.2);
+}
+
+.motivado-main .stat-label {
+  font-size: 0.95rem;
+  color: #d5b9b2;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .motivado-main .playlists-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .motivado-container {
+    padding-left: 0;
+  }
+
+  .motivado-container.sidebar-open {
+    padding-left: 0;
+  }
+
+  .motivado-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .motivado-header .back-button {
+    width: 100%;
+  }
+
+  .motivado-header .mood-info {
+    width: 100%;
+  }
+
+  .motivado-header .user-badge {
+    width: 100%;
+    text-align: center;
+  }
+
+  .motivado-main .welcome-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .motivado-main .welcome-card h2 {
+    font-size: 1.8rem;
+  }
+
+  .motivado-main {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .motivado-main .playlists-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .motivado-main .playlist-card {
+    padding: 1.5rem;
+  }
+
+  .motivado-main .stats-section {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .motivado-header .mood-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .motivado-header .mood-emoji {
+    font-size: 2.5rem;
+  }
+
+  .motivado-main .welcome-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .motivado-main .welcome-card p {
+    font-size: 1rem;
+  }
+
+  .motivado-main .playlist-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .motivado-main .playlist-content {
+    text-align: center;
+  }
+
+  .motivado-main .playlist-content h3 {
+    font-size: 1.15rem;
+  }
+
+  .motivado-main .playlist-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2.5rem;
+  }
+
+  .motivado-main .play-button {
+    width: 45px;
+    height: 45px;
+  }
+
+  .motivado-main .stat-card {
+    padding: 1.5rem;
+  }
+
+  .motivado-main .stat-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2.5rem;
+  }
+
+  .motivado-main .stat-number {
+    font-size: 1.75rem;
+  }
+}

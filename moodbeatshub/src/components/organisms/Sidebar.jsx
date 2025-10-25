@@ -1,25 +1,10 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import "./styles/Sidebar.css";
-
-// Datos de ejemplo para los links del sidebar
-const LinksArray = [
-  { id: 1, label: "Spotify Music", to: "/" },
-  { id: 2, label: "Estado de ánimo ", to: "/productos" },
-  { id: 3, label: "Playlists favoritas", to: "/categorias" },
-];
-
-const SecondarylinksArray = [
-  { id: 5, label: "Configuración", to: "/configuracion" },
-  { id: 6, label: "Perfil", to: "/perfil" },
-];
+import { LinksArray, SecondarylinksArray } from "../../utils/StaticData";
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
-  const [activeLink, setActiveLink] = useState(1);
-
-  const handleLinkClick = (id) => {
-    setActiveLink(id);
-  };
 
   return (
     <div className="sidebar-main">
@@ -42,15 +27,17 @@ export function Sidebar() {
 
         {/* Primary Links */}
         <div className="sidebar-links">
-          {LinksArray.map((link) => (
-            <div
-              key={link.id}
-              className={`sidebar-link ${activeLink === link.id ? 'active' : ''}`}
-              onClick={() => handleLinkClick(link.id)}
+          {LinksArray.map((link, index) => (
+            <NavLink
+              key={index}
+              to={link.to}
+              className={({ isActive }) => 
+                `sidebar-link ${isActive ? 'active' : ''}`
+              }
             >
-              <div className="link-icon">📊</div>
+              <div className="link-icon">{link.icon}</div>
               {isOpen && <span className="link-label">{link.label}</span>}
-            </div>
+            </NavLink>
           ))}
         </div>
 
@@ -58,15 +45,17 @@ export function Sidebar() {
 
         {/* Secondary Links */}
         <div className="sidebar-links">
-          {SecondarylinksArray.map((link) => (
-            <div
-              key={link.id}
-              className={`sidebar-link ${activeLink === link.id ? 'active' : ''}`}
-              onClick={() => handleLinkClick(link.id)}
+          {SecondarylinksArray.map((link, index) => (
+            <NavLink
+              key={index}
+              to={link.to}
+              className={({ isActive }) => 
+                `sidebar-link ${isActive ? 'active' : ''}`
+              }
             >
-              <div className="link-icon">⚙️</div>
+              <div className="link-icon">{link.icon}</div>
               {isOpen && <span className="link-label">{link.label}</span>}
-            </div>
+            </NavLink>
           ))}
         </div>
 
