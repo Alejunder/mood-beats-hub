@@ -449,7 +449,8 @@
 
 .mood-main .spotify-button,
 .mood-main .favorite-button,
-.mood-main .regenerate-button {
+.mood-main .regenerate-button,
+.mood-main .view-favorites-button {
   flex: 1;
   min-width: 150px;
   padding: 1rem 1.5rem;
@@ -547,6 +548,29 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+.mood-main .view-favorites-button {
+  background: linear-gradient(135deg, #FFD93D 0%, #FFC107 100%);
+  color: #1a1a1a;
+  box-shadow: 
+    0 4px 12px rgba(255, 217, 61, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 217, 61, 0.5);
+}
+
+.mood-main .view-favorites-button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #FFE066 0%, #FFD93D 100%);
+  box-shadow: 
+    0 6px 16px rgba(255, 217, 61, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 217, 61, 0.7);
+}
+
+.mood-main .view-favorites-button span {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 /* Playlists Grid */
@@ -813,7 +837,8 @@
 
   .mood-main .spotify-button,
   .mood-main .favorite-button,
-  .mood-main .regenerate-button {
+  .mood-main .regenerate-button,
+  .mood-main .view-favorites-button {
     width: 100%;
     min-width: auto;
   }

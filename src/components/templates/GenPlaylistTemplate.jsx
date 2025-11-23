@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabase/supabase.config';
 import { getPlaylistsByMood } from '../../services/spotifyService';
 import { generatePlaylistByMood } from '../../services/playlistGenerationService';
-import { savePlaylistAsFavorite, isPlaylistFavorite, removeFavoritePlaylist, deletePlaylistCompletely } from '../../services/favoritesService';
+import { savePlaylistAsFavorite, isPlaylistFavorite, deletePlaylistCompletely } from '../../services/favoritesService';
 import { CircleLoader } from '../atoms/CircleLoader';
 import { PlaylistQuizModal } from '../organisms/PlaylistQuizModal';
 import { AVAILABLE_MOODS } from '../../services/playlistQuizService';
 import { SpotifyPlayer } from '../molecules/SpotifyPlayer';
 import { useSpotifyPlayer } from '../../hooks/useSpotifyPlayer';
+import { PlaylistTracksModal } from '../organisms/PlaylistTracksModal';
 import { useLanguage } from '../../context/LanguageContext';
 import { getTranslatedAvailableMoods } from '../../utils/moodTranslations';
 import './styles/GenPlaylistTemplate.css';
@@ -27,6 +28,7 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
   const [hasShownInitialQuiz, setHasShownInitialQuiz] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [savingFavorite, setSavingFavorite] = useState(false);
+  const [showTracksModal, setShowTracksModal] = useState(false);
 
   // Hook del reproductor de Spotify
   const {
@@ -248,15 +250,67 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
 
       // Buscar el mood en la base de datos con el nombre correcto
       const moodNameInDb = moodConfig.label; // 'Feliz', 'Triste', 'Motivado', 'Relajado'
-      const { data: moodData, error: moodError } = await supabase
+      
+      console.log(`🔍 Buscando mood: "${moodNameInDb}" en la base de datos...`);
+      
+      // Primero intentar búsqueda case-insensitive
+      let { data: moodData, error: moodError } = await supabase
         .from('moods')
         .select('id, name')
-        .eq('name', moodNameInDb)
+        .ilike('name', moodNameInDb)
         .single();
 
+      // Si falla, intentar búsqueda exacta
       if (moodError || !moodData) {
-        console.error('Error obteniendo mood:', moodError);
-        throw new Error(`No se pudo obtener información del mood ${moodNameInDb}`);
+        console.warn('⚠️ Búsqueda case-insensitive falló, intentando exacta...', moodError);
+        const exactResult = await supabase
+          .from('moods')
+          .select('id, name')
+          .eq('name', moodNameInDb)
+          .single();
+        
+        if (!exactResult.error && exactResult.data) {
+          moodData = exactResult.data;
+          moodError = null;
+        } else {
+          moodError = exactResult.error;
+        }
+      }
+
+      // Si aún falla, listar todos los moods disponibles para debugging
+      if (moodError || !moodData) {
+        console.error('❌ Error obteniendo mood:', moodError);
+        
+        // Intentar listar todos los moods para ver qué hay disponible
+        const { data: allMoods, error: listError } = await supabase
+          .from('moods')
+          .select('id, name, is_active')
+          .eq('is_active', true);
+        
+        if (listError) {
+          console.error('❌ Error listando moods:', listError);
+          throw new Error(`No se pudo acceder a la tabla moods. Verifica que la tabla exista y tengas permisos. Error: ${listError.message}`);
+        }
+        
+        console.log('📋 Moods disponibles en BD:', allMoods);
+        
+        if (!allMoods || allMoods.length === 0) {
+          throw new Error(`No hay moods disponibles en la base de datos. Por favor, crea la tabla moods e inserta los registros necesarios.`);
+        }
+        
+        // Intentar encontrar el mood manualmente
+        const foundMood = allMoods.find(m => 
+          m.name.toLowerCase() === moodNameInDb.toLowerCase() ||
+          m.name.toLowerCase().trim() === moodNameInDb.toLowerCase().trim()
+        );
+        
+        if (foundMood) {
+          moodData = foundMood;
+          moodError = null;
+          console.log('✅ Mood encontrado manualmente:', foundMood);
+        } else {
+          throw new Error(`No se pudo obtener información del mood "${moodNameInDb}". Moods disponibles: ${allMoods.map(m => m.name).join(', ')}`);
+        }
       }
 
       console.log('🎭 Mood obtenido:', moodData);
@@ -338,25 +392,32 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
       }
 
       if (isFavorite) {
-        // Confirmar eliminación
+        // Confirmar eliminación completa (de Spotify y favoritos)
         const confirmDelete = window.confirm(
-          `${t('removeFavoriteOnly') || '¿Quitar de favoritos?'}\n\n` +
-          `✓ Se quitará de tus favoritos en MoodBeatsHub\n` +
-          `✓ La playlist seguirá en tu cuenta de Spotify\n\n` +
-          `¿Continuar?`
+          `${t('deleteConfirm')?.replace('{name}', generatedPlaylist.name) || `⚠️ ¿Eliminar "${generatedPlaylist.name}"?`}\n\n` +
+          `Esta acción:\n` +
+          `✗ Eliminará la playlist de tu cuenta de Spotify\n` +
+          `✗ La quitará de tus favoritos en MoodBeatsHub\n` +
+          `✗ NO se puede deshacer\n\n` +
+          `¿Estás completamente seguro?`
         );
         if (!confirmDelete) {
           setSavingFavorite(false);
           return;
         }
 
-        // Remover SOLO de favoritos (NO elimina de Spotify)
-        const result = await removeFavoritePlaylist(userData.id, generatedPlaylist.id);
+        // Eliminar completamente de Spotify y de favoritos
+        const result = await deletePlaylistCompletely(
+          generatedPlaylist.id,
+          spotifyAccessToken,
+          userData.id
+        );
         if (result.success) {
           setIsFavorite(false);
-          console.log('✅ Playlist quitada de favoritos (permanece en Spotify)');
+          setGeneratedPlaylist(null);
+          console.log('✅ Playlist eliminada completamente de Spotify y favoritos');
         } else {
-          throw new Error(result.error);
+          throw new Error(result.error || 'Error al eliminar la playlist');
         }
       } else {
         // Agregar a favoritos (ahora se guarda en spotify_playlists)
@@ -493,21 +554,13 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
               </div>
 
               <div className="generated-actions">
-                <a 
-                  href={generatedPlaylist.spotifyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button 
                   className="spotify-button"
-                  onClick={(e) => {
-                    if (playerReady && generatedPlaylist.spotifyUri) {
-                      e.preventDefault();
-                      playPlaylist(generatedPlaylist.spotifyUri);
-                    }
-                  }}
+                  onClick={() => setShowTracksModal(true)}
                 >
-                  <span>▶</span>
-                  {playerReady ? t('playInPlayer') : t('openInSpotify2')}
-                </a>
+                  <span>🎵</span>
+                  {t('viewSongs') || 'Ver Canciones'}
+                </button>
                 <button 
                   className={`favorite-button ${isFavorite ? 'is-favorite' : ''}`}
                   onClick={handleToggleFavorite}
@@ -517,6 +570,16 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
                   <span>{isFavorite ? '❤️' : '🤍'}</span>
                   {savingFavorite ? t('saving') : (isFavorite ? t('favorite') : t('favorites'))}
                 </button>
+                {isFavorite && (
+                  <button 
+                    className="view-favorites-button"
+                    onClick={() => navigate('/playlists-favoritas')}
+                    title={t('myPlaylists') || 'Ver mis playlists favoritas'}
+                  >
+                    <span>⭐</span>
+                    {t('myPlaylists') || 'Mis Playlists'}
+                  </button>
+                )}
                 <button 
                   className="regenerate-button"
                   onClick={handleGeneratePlaylist}
@@ -587,6 +650,21 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
         <PlaylistQuizModal
           onClose={handleQuizClose}
           onSubmit={handleQuizSubmit}
+          spotifyAccessToken={spotifyAccessToken}
+        />
+      )}
+
+      {/* Modal de Ver Canciones */}
+      {generatedPlaylist && (
+        <PlaylistTracksModal
+          isOpen={showTracksModal}
+          onClose={() => setShowTracksModal(false)}
+          playlist={{
+            spotify_playlist_id: generatedPlaylist.id,
+            name: generatedPlaylist.name,
+            description: generatedPlaylist.description,
+            image_url: generatedPlaylist.imageUrl
+          }}
           spotifyAccessToken={spotifyAccessToken}
         />
       )}

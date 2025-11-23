@@ -118,15 +118,16 @@ export function PlaylistsTemplate({ spotifyAccessToken, tokensLoading }) {
   };
 
   const handleRemoveFromFavorites = async (playlist) => {
-    if (!user) return;
+    if (!user || !spotifyAccessToken) return;
 
-    // Opción 1: Solo quitar de favoritos (mantener en Spotify)
-    // Opción 2: Eliminar completamente (quitar de Spotify también)
+    // Confirmar eliminación completa (de Spotify y favoritos)
     const choice = window.confirm(
-      `${t('removeFavoritesConfirm') || '¿Quitar "${playlist.name}" de favoritos?'}\n\n` +
-      `✓ Se quitará de tus favoritos en MoodBeatsHub\n` +
-      `✓ La playlist seguirá en tu cuenta de Spotify\n\n` +
-      `Para eliminarla completamente de Spotify, cancela y ábrela en Spotify.`
+      `${t('deleteConfirm')?.replace('{name}', playlist.name) || `⚠️ ¿Eliminar "${playlist.name}"?`}\n\n` +
+      `Esta acción:\n` +
+      `✗ Eliminará la playlist de tu cuenta de Spotify\n` +
+      `✗ La quitará de tus favoritos en MoodBeatsHub\n` +
+      `✗ NO se puede deshacer\n\n` +
+      `¿Estás completamente seguro?`
     );
     
     if (!choice) return;
@@ -145,21 +146,22 @@ export function PlaylistsTemplate({ spotifyAccessToken, tokensLoading }) {
         throw new Error(t('errorLoadUser'));
       }
 
-      // Solo eliminar de favoritos (NO de Spotify)
-      const result = await removeFavoritePlaylist(
-        userData.id, 
-        playlist.spotify_playlist_id
+      // Eliminar completamente de Spotify y de favoritos
+      const result = await deletePlaylistCompletely(
+        playlist.spotify_playlist_id,
+        spotifyAccessToken,
+        userData.id
       );
       
       if (result.success) {
-        console.log('✅ Playlist quitada de favoritos (permanece en Spotify)');
+        console.log('✅ Playlist eliminada completamente de Spotify y favoritos');
         // Recargar la lista
         await loadFavoritePlaylists();
       } else {
-        throw new Error(result.error);
+        throw new Error(result.error || 'Error al eliminar la playlist');
       }
     } catch (err) {
-      console.error('❌ Error quitando de favoritos:', err);
+      console.error('❌ Error eliminando playlist:', err);
       alert(t('deleteError') + ': ' + err.message);
     } finally {
       setDeletingId(null);

@@ -127,6 +127,7 @@ export const useSpotifyPlayer = (accessToken) => {
         spotifyPlayer.addListener('not_ready', ({ device_id }) => {
           console.log('⚠️ Dispositivo no disponible:', device_id);
           setIsReady(false);
+          setDeviceId(null);
           // Intentar reconectar
           reconnectPlayer();
         });
@@ -169,7 +170,9 @@ export const useSpotifyPlayer = (accessToken) => {
 
         spotifyPlayer.addListener('playback_error', ({ message }) => {
           console.error('❌ Error de reproducción:', message);
-          // No detener el reproductor, solo registrar el error
+          setError(`Error de reproducción: ${message}`);
+          // Limpiar el error después de 5 segundos
+          setTimeout(() => setError(null), 5000);
         });
 
         // Conectar con reintentos automáticos
@@ -213,13 +216,85 @@ export const useSpotifyPlayer = (accessToken) => {
 
   // Funciones con manejo de errores robusto
   const playPlaylist = useCallback(async (playlistUri) => {
-    if (!deviceId || !accessToken) {
-      console.error('⚠️ Dispositivo no listo o sin token');
+    if (!accessToken) {
+      console.error('⚠️ No hay token de acceso');
+      setError('No hay token de acceso. Por favor, recarga la página.');
       return;
     }
 
+    // Si no hay deviceId, intentar obtener un dispositivo activo
+    let activeDeviceId = deviceId;
+    
+    if (!activeDeviceId) {
+      console.log('🔍 No hay deviceId, buscando dispositivos activos...');
+      try {
+        const devicesResponse = await fetch('https://api.spotify.com/v1/me/player/devices', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        if (devicesResponse.ok) {
+          const devicesData = await devicesResponse.json();
+          const activeDevice = devicesData.devices?.find(d => d.is_active);
+          
+          if (activeDevice) {
+            activeDeviceId = activeDevice.id;
+            console.log('✅ Dispositivo activo encontrado:', activeDeviceId);
+            setDeviceId(activeDeviceId);
+          } else if (devicesData.devices?.length > 0) {
+            // Si hay dispositivos pero ninguno está activo, usar el primero
+            activeDeviceId = devicesData.devices[0].id;
+            console.log('⚠️ No hay dispositivo activo, usando el primero disponible:', activeDeviceId);
+            setDeviceId(activeDeviceId);
+          }
+        }
+      } catch (err) {
+        console.warn('⚠️ Error obteniendo dispositivos:', err);
+      }
+    }
+
+    // Si aún no hay dispositivo, esperar un poco y reintentar
+    if (!activeDeviceId) {
+      console.warn('⚠️ No se encontró ningún dispositivo disponible');
+      setError('No se encontró ningún dispositivo de Spotify. Asegúrate de tener Spotify abierto o recarga la página.');
+      
+      // Intentar reconectar el player
+      if (playerRef.current) {
+        try {
+          await playerRef.current.connect();
+          // Esperar un momento para que el dispositivo se registre
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          activeDeviceId = deviceId;
+        } catch (err) {
+          console.error('❌ Error reconectando player:', err);
+        }
+      }
+      
+      if (!activeDeviceId) {
+        return;
+      }
+    }
+
     try {
-      const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      // Primero, intentar transferir la reproducción al dispositivo web si es necesario
+      if (activeDeviceId !== deviceId) {
+        try {
+          await fetch(`https://api.spotify.com/v1/me/player`, {
+            method: 'PUT',
+            body: JSON.stringify({ device_ids: [activeDeviceId], play: false }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+          console.log('✅ Reproducción transferida al dispositivo web');
+        } catch (transferError) {
+          console.warn('⚠️ Error transfiriendo reproducción:', transferError);
+        }
+      }
+
+      const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${activeDeviceId}`, {
         method: 'PUT',
         body: JSON.stringify({ context_uri: playlistUri }),
         headers: {
@@ -230,13 +305,47 @@ export const useSpotifyPlayer = (accessToken) => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `Error ${response.status}`);
+        const errorMessage = errorData.error?.message || `Error ${response.status}`;
+        
+        // Si el error es 404 (device not found), intentar sin device_id
+        if (response.status === 404 || errorMessage.includes('Device not found')) {
+          console.warn('⚠️ Dispositivo no encontrado, intentando sin device_id...');
+          
+          const retryResponse = await fetch('https://api.spotify.com/v1/me/player/play', {
+            method: 'PUT',
+            body: JSON.stringify({ context_uri: playlistUri }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+
+          if (!retryResponse.ok) {
+            const retryErrorData = await retryResponse.json().catch(() => ({}));
+            throw new Error(retryErrorData.error?.message || `Error ${retryResponse.status}`);
+          }
+          
+          console.log('✅ Playlist reproduciendo (sin device_id)');
+          setError(null);
+          return;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       console.log('✅ Playlist reproduciendo');
+      setError(null);
     } catch (error) {
       console.error('❌ Error al reproducir playlist:', error);
-      // No lanzar error, solo registrar
+      
+      // Mensajes de error más amigables
+      if (error.message.includes('Device not found') || error.message.includes('404')) {
+        setError('Dispositivo no encontrado. Asegúrate de tener Spotify abierto o recarga la página.');
+      } else if (error.message.includes('Premium')) {
+        setError('Se requiere Spotify Premium para reproducir música.');
+      } else {
+        setError(`Error al reproducir: ${error.message}`);
+      }
     }
   }, [deviceId, accessToken]);
 

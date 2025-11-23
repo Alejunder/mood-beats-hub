@@ -201,6 +201,8 @@ export const fr = {
   // Player
   loadingPlayer2: 'Chargement du lecteur Spotify...',
   requiresPremium: 'Nécessite Spotify Premium',
+  restartAppForPlayer: 'Redémarrez l\'application pour utiliser le lecteur Spotify',
+  restartButton: 'Redémarrer l\'Application',
   selectPlaylist: 'Sélectionnez une playlist pour commencer',
   previous: 'Précédent',
   playButton: 'Lire',

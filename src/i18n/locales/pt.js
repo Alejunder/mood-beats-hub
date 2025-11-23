@@ -201,6 +201,8 @@ export const pt = {
   // Player
   loadingPlayer2: 'Carregando player do Spotify...',
   requiresPremium: 'Requer Spotify Premium',
+  restartAppForPlayer: 'Reinicie o aplicativo para usar o player do Spotify',
+  restartButton: 'Reiniciar Aplicativo',
   selectPlaylist: 'Selecione uma playlist para começar',
   previous: 'Anterior',
   playButton: 'Reproduzir',

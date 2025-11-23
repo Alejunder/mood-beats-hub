@@ -20,6 +20,25 @@ export function SpotifyPlayer({
   const [localPosition, setLocalPosition] = useState(0);
   const [volume, setVolume] = useState(50);
   const [error, setError] = useState(null);
+  const [showRestartMessage, setShowRestartMessage] = useState(false);
+
+  // Mostrar mensaje de reinicio después de 5 segundos si sigue cargando
+  useEffect(() => {
+    if (!isReady) {
+      console.log('⏱️ Iniciando timer de 5 segundos para mensaje de reinicio...');
+      const timer = setTimeout(() => {
+        console.log('⏰ 5 segundos transcurridos, mostrando mensaje de reinicio');
+        setShowRestartMessage(true);
+      }, 5000); // 5 segundos
+
+      return () => {
+        clearTimeout(timer);
+        setShowRestartMessage(false);
+      };
+    } else {
+      setShowRestartMessage(false);
+    }
+  }, [isReady]);
 
   // Sincronizar posición con seguridad
   useEffect(() => {
@@ -147,12 +166,28 @@ export function SpotifyPlayer({
   };
 
   if (!isReady) {
+    console.log('🔄 Renderizando estado de carga, showRestartMessage:', showRestartMessage);
     return (
       <div className="spotify-player loading">
         <div className="player-loading-content">
           <div className="loading-spinner"></div>
           <p className="loading-text">🎵 {t('loadingPlayer2')}</p>
           <p className="loading-note">{t('requiresPremium')}</p>
+          {showRestartMessage && (
+            <>
+              <div className="loading-restart-message" style={{ display: 'flex' }}>
+                <span className="restart-icon">⚠️</span>
+                <span className="restart-text">{t('restartAppForPlayer')}</span>
+              </div>
+              <button 
+                className="restart-button"
+                onClick={() => window.location.reload()}
+              >
+                <span className="restart-btn-icon">🔄</span>
+                <span className="restart-btn-text">{t('restartButton')}</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     );

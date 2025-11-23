@@ -18,12 +18,20 @@
   backdrop-filter: blur(10px);
 }
 
+.spotify-player.loading {
+  max-height: none;
+  min-height: auto;
+}
+
 .spotify-player.loading,
 .spotify-player.empty {
   justify-content: center;
   text-align: center;
-  padding: 12px 16px;
-  min-height: 60px;
+  padding: 16px 20px;
+  min-height: auto;
+  align-items: center;
+  flex-wrap: wrap;
+  overflow: visible;
 }
 
 /* Loading State */
@@ -32,6 +40,9 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  max-width: 600px;
+  overflow: visible;
 }
 
 .loading-spinner {
@@ -58,6 +69,93 @@
   color: #b3b3b3;
   font-size: 0.8em;
   margin: 0;
+}
+
+.loading-restart-message {
+  color: #ff6b6b;
+  font-size: 0.95em;
+  margin: 16px 0 0 0;
+  font-weight: 600;
+  padding: 12px 18px;
+  background: rgba(255, 107, 107, 0.2);
+  border: 2px solid rgba(255, 107, 107, 0.5);
+  border-radius: 8px;
+  animation: fadeIn 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 
+    0 2px 8px rgba(255, 107, 107, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.restart-icon {
+  font-size: 1.2em;
+  flex-shrink: 0;
+}
+
+.restart-text {
+  flex: 1;
+}
+
+.restart-button {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 12px rgba(29, 185, 84, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.5s ease;
+}
+
+.restart-button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1ed760 0%, #1DB954 100%);
+  box-shadow: 
+    0 6px 16px rgba(29, 185, 84, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+.restart-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 8px rgba(29, 185, 84, 0.4),
+    inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.restart-btn-icon {
+  font-size: 1.1em;
+  animation: spin 2s linear infinite;
+}
+
+.restart-btn-text {
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Empty State */
