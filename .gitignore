@@ -24,3 +24,5 @@ mcpsupabase.json
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
