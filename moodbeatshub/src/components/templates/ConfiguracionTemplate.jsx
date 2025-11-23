@@ -1,146 +1,190 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import { useSettings } from '../../context/SettingsContext';
 import './styles/ConfiguracionTemplate.css';
 
 export function ConfiguracionTemplate() {
-  const [settings, setSettings] = useState({
-    notifications: true,
-    autoPlay: false,
-    explicitContent: true,
-    darkMode: true,
-    language: 'es',
-    quality: 'high'
-  });
+  const navigate = useNavigate();
+  const { language, changeLanguage, t } = useLanguage();
+  const { settings, updateSetting, toggleSetting, resetSettings } = useSettings();
+  const [showSaveNotification, setShowSaveNotification] = useState(false);
+
+  // Sincronizar idioma con el contexto de configuración
+  useEffect(() => {
+    if (settings.language !== language) {
+      updateSetting('language', language);
+    }
+  }, [language]);
 
   const handleToggle = (setting) => {
-    setSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting]
-    }));
+    toggleSetting(setting);
+    showNotification();
+  };
+
+  const handleLanguageChange = (value) => {
+    changeLanguage(value);
+    updateSetting('language', value);
+    showNotification();
   };
 
   const handleSelect = (setting, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [setting]: value
-    }));
+    updateSetting(setting, value);
+    showNotification();
   };
 
-  const handleSave = () => {
-    // Aquí iría la lógica para guardar la configuración
-    console.log('Configuración guardada:', settings);
-    alert('Configuración guardada exitosamente');
+  const showNotification = () => {
+    setShowSaveNotification(true);
+    setTimeout(() => setShowSaveNotification(false), 2000);
+  };
+
+  const handleReset = () => {
+    if (window.confirm(t('resetConfirm') || '¿Restablecer toda la configuración a valores predeterminados?')) {
+      resetSettings();
+      changeLanguage('es');
+      alert(t('resetSuccess') || '✅ Configuración restablecida');
+    }
   };
 
   return (
     <div className="configuracion-container">
-      <div className="configuracion-header">
-        <h1>Configuración</h1>
-        <p>Personaliza tu experiencia en MoodBeatsHub</p>
+      <div className="config-header">
+        <h1>⚙️ {t('settings')}</h1>
+        <p>{t('adjustExperience')}</p>
       </div>
 
-      <div className="settings-sections">
-        <section className="settings-section">
-          <h2>🔔 Notificaciones</h2>
-          <div className="setting-item">
-            <div className="setting-info">
-              <label>Notificaciones push</label>
-              <p>Recibe notificaciones sobre nuevas recomendaciones</p>
+      {/* Sección de Reproducción */}
+      <div className="config-section">
+        <h2>🎵 {t('playback')}</h2>
+        <div className="config-settings-list">
+          <div className="config-setting-item">
+            <div className="config-setting-info">
+              <label>{t('autoplay')}</label>
+              <p>{t('autoplayDesc')}</p>
             </div>
             <button 
-              className={`toggle-btn ${settings.notifications ? 'active' : ''}`}
-              onClick={() => handleToggle('notifications')}
-            >
-              <span className="toggle-slider"></span>
-            </button>
-          </div>
-        </section>
-
-        <section className="settings-section">
-          <h2>🎵 Reproducción</h2>
-          <div className="setting-item">
-            <div className="setting-info">
-              <label>Reproducción automática</label>
-              <p>Reproduce automáticamente al seleccionar un estado de ánimo</p>
-            </div>
-            <button 
-              className={`toggle-btn ${settings.autoPlay ? 'active' : ''}`}
+              className={`config-toggle-btn ${settings.autoPlay ? 'active' : ''}`}
               onClick={() => handleToggle('autoPlay')}
             >
-              <span className="toggle-slider"></span>
+              <span className="config-toggle-slider"></span>
             </button>
           </div>
-          <div className="setting-item">
-            <div className="setting-info">
-              <label>Calidad de audio</label>
-              <p>Selecciona la calidad de reproducción</p>
+          
+          <div className="config-setting-item">
+            <div className="config-setting-info">
+              <label>{t('audioQuality')}</label>
+              <p>{t('audioQualityDesc')}</p>
             </div>
             <select 
               value={settings.quality}
               onChange={(e) => handleSelect('quality', e.target.value)}
-              className="select-input"
+              className="config-select-input"
             >
-              <option value="low">Baja</option>
-              <option value="normal">Normal</option>
-              <option value="high">Alta</option>
-              <option value="very-high">Muy alta</option>
+              <option value="low">{t('low')}</option>
+              <option value="normal">{t('normal')}</option>
+              <option value="high">{t('high')}</option>
+              <option value="very-high">{t('veryHigh')}</option>
             </select>
           </div>
-        </section>
-
-        <section className="settings-section">
-          <h2>🔒 Contenido</h2>
-          <div className="setting-item">
-            <div className="setting-info">
-              <label>Contenido explícito</label>
-              <p>Permitir canciones con contenido explícito</p>
-            </div>
-            <button 
-              className={`toggle-btn ${settings.explicitContent ? 'active' : ''}`}
-              onClick={() => handleToggle('explicitContent')}
-            >
-              <span className="toggle-slider"></span>
-            </button>
-          </div>
-        </section>
-
-        <section className="settings-section">
-          <h2>🎨 Apariencia</h2>
-          <div className="setting-item">
-            <div className="setting-info">
-              <label>Modo oscuro</label>
-              <p>Usar tema oscuro en la aplicación</p>
-            </div>
-            <button 
-              className={`toggle-btn ${settings.darkMode ? 'active' : ''}`}
-              onClick={() => handleToggle('darkMode')}
-            >
-              <span className="toggle-slider"></span>
-            </button>
-          </div>
-          <div className="setting-item">
-            <div className="setting-info">
-              <label>Idioma</label>
-              <p>Selecciona el idioma de la aplicación</p>
-            </div>
-            <select 
-              value={settings.language}
-              onChange={(e) => handleSelect('language', e.target.value)}
-              className="select-input"
-            >
-              <option value="es">Español</option>
-              <option value="en">English</option>
-              <option value="pt">Português</option>
-            </select>
-          </div>
-        </section>
+        </div>
       </div>
 
-      <div className="settings-actions">
-        <button className="save-btn" onClick={handleSave}>
-          Guardar cambios
+      {/* Sección de Contenido */}
+      <div className="config-section">
+        <h2>🔒 {t('content')}</h2>
+        <div className="config-settings-list">
+          <div className="config-setting-item">
+            <div className="config-setting-info">
+              <label>{t('explicitContent')}</label>
+              <p>{t('explicitContentDesc')}</p>
+            </div>
+            <button 
+              className={`config-toggle-btn ${settings.explicitContent ? 'active' : ''}`}
+              onClick={() => handleToggle('explicitContent')}
+            >
+              <span className="config-toggle-slider"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Sección de Notificaciones */}
+      <div className="config-section">
+        <h2>🔔 {t('notifications')}</h2>
+        <div className="config-settings-list">
+          <div className="config-setting-item">
+            <div className="config-setting-info">
+              <label>{t('pushNotifications')}</label>
+              <p>{t('pushNotificationsDesc')}</p>
+            </div>
+            <button 
+              className={`config-toggle-btn ${settings.notifications ? 'active' : ''}`}
+              onClick={() => handleToggle('notifications')}
+            >
+              <span className="config-toggle-slider"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Sección de Idioma */}
+      <div className="config-section">
+        <h2>🌍 {t('language')}</h2>
+        <div className="config-settings-list">
+          <div className="config-setting-item">
+            <div className="config-setting-info">
+              <label>{t('language')}</label>
+              <p>{t('languageDesc')}</p>
+            </div>
+            <select 
+              value={language}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              className="config-select-input"
+            >
+              <option value="es">🇪🇸 Español</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="pt">🇧🇷 Português</option>
+              <option value="fr">🇫🇷 Français</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Notificación de guardado automático */}
+      {showSaveNotification && (
+        <div className="config-save-notification">
+          <span>✅</span>
+          <span>{t('autoSaved') || 'Guardado automáticamente'}</span>
+        </div>
+      )}
+
+      {/* Botones de acción */}
+      <div className="config-actions">
+        <button className="config-reset-btn" onClick={handleReset}>
+          <span>🔄</span>
+          {t('resetSettings') || 'Restablecer'}
         </button>
-        <button className="cancel-btn">
-          Cancelar
+        <button className="config-cancel-btn" onClick={() => navigate('/home')}>
+          <span>↩️</span>
+          {t('back')}
+        </button>
+      </div>
+
+      {/* Enlaces rápidos */}
+      <div className="config-quick-actions">
+        <button 
+          className="config-action-btn primary"
+          onClick={() => navigate('/perfil')}
+        >
+          <span>👤</span>
+          {t('viewProfile')}
+        </button>
+        <button 
+          className="config-action-btn secondary"
+          onClick={() => navigate('/playlists-favoritas')}
+        >
+          <span>⭐</span>
+          {t('myPlaylists')}
         </button>
       </div>
     </div>

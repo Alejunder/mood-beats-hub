@@ -1,17 +1,49 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 import "./styles/Sidebar.css";
-import { LinksArray, SecondarylinksArray } from "../../utils/StaticData";
 
 export function Sidebar() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(true);
+
+  const LinksArray = [
+    {
+      label: t('home'),
+      icon: "🏠",
+      to: "/",
+    },
+    {
+      label: t('mood'),
+      icon: "😊",
+      to: "/animo",
+    },
+    {
+      label: t('playlists'),
+      icon: "⭐",
+      to: "/playlists-favoritas",
+    },
+  ];
+
+  const SecondarylinksArray = [
+    {
+      label: t('config'),
+      icon: "⚙️",
+      to: "/configuracion",
+    },
+    { 
+      label: t('profile'),
+      icon: "👤",
+      to: "/perfil",
+    },
+  ];
 
   return (
     <div className="sidebar-main">
       <button 
         className={`sidebar-toggle ${isOpen ? 'open' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle sidebar"
+        aria-label={t('toggle')}
       >
         →
       </button>
@@ -64,7 +96,7 @@ export function Sidebar() {
         {/* Footer Card */}
         {isOpen && (
           <div className="sidebar-card">
-            <p>Demo</p>
+            <p>{t('demo')}</p>
           </div>
         )}
       </nav>

@@ -22,10 +22,16 @@ export const usePlaylistGeneration = () => {
    * @param {string} mood - Mood ('feliz', 'triste', 'motivado', 'relajado')
    * @param {string} userId - ID del usuario en Supabase
    * @param {string} moodId - ID del mood en la BD
+   * @param {object} quizAnswers - OBLIGATORIO: Respuestas del quiz
    */
-  const generatePlaylist = async (mood, userId, moodId) => {
+  const generatePlaylist = async (mood, userId, moodId, quizAnswers) => {
     if (!accessToken) {
       setError('No hay token de Spotify disponible');
+      return null;
+    }
+
+    if (!quizAnswers) {
+      setError('Se requieren las respuestas del cuestionario');
       return null;
     }
 
@@ -35,7 +41,8 @@ export const usePlaylistGeneration = () => {
 
     try {
       console.log(`🚀 Generando playlist para mood: ${mood}`);
-      const result = await generatePlaylistByMood(mood, accessToken, userId, moodId);
+      console.log('📋 Quiz answers:', quizAnswers);
+      const result = await generatePlaylistByMood(mood, accessToken, userId, moodId, quizAnswers);
       
       setGeneratedPlaylist(result.playlist);
       console.log('✅ Playlist generada exitosamente:', result.playlist.name);

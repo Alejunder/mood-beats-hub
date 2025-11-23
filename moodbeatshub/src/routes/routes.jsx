@@ -5,10 +5,7 @@ import { Estadoanimo } from "../pages/EstadoAnimo";
 import { Playlists } from "../pages/Playlists";
 import { Configuracion } from "../pages/Configuracion";
 import { Perfil } from "../pages/Perfil";
-import { Feliz } from "../pages/Feliz";
-import { Triste } from "../pages/Triste";
-import { Motivado } from "../pages/Motivado";
-import { Relajado } from "../pages/Relajado";
+import { SelectMood } from "../pages/GenPlaylist";
 import { ProtectedRoute } from "../hooks/protectedroutes";
 
 export function MyRoutes({ user, spotifyAccessToken, tokensLoading }) {
@@ -23,41 +20,31 @@ export function MyRoutes({ user, spotifyAccessToken, tokensLoading }) {
       {/* Rutas protegidas - requieren autenticación */}
       <Route element={<ProtectedRoute user={user} redirectTo="/login" />}>
         <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/animo" element={<Estadoanimo />} />
-        <Route path="/playlists-favoritas" element={<Playlists />} />
+        <Route 
+          path="/playlists-favoritas" 
+          element={
+            <Playlists 
+              spotifyAccessToken={spotifyAccessToken}
+              tokensLoading={tokensLoading}
+            />
+          } 
+        />
         <Route path="/configuracion" element={<Configuracion />} />
-        <Route path="/perfil" element={<Perfil />} />
         <Route 
-          path="/feliz" 
+          path="/perfil" 
           element={
-            <Feliz 
-              spotifyAccessToken={spotifyAccessToken} 
+            <Perfil 
+              spotifyAccessToken={spotifyAccessToken}
               tokensLoading={tokensLoading}
             />
           } 
         />
         <Route 
-          path="/triste" 
+          path="/genplaylist" 
           element={
-            <Triste 
-              spotifyAccessToken={spotifyAccessToken} 
-              tokensLoading={tokensLoading}
-            />
-          } 
-        />
-        <Route 
-          path="/motivado" 
-          element={
-            <Motivado 
-              spotifyAccessToken={spotifyAccessToken} 
-              tokensLoading={tokensLoading}
-            />
-          } 
-        />
-        <Route 
-          path="/relajado" 
-          element={
-            <Relajado 
+            <SelectMood
               spotifyAccessToken={spotifyAccessToken} 
               tokensLoading={tokensLoading}
             />

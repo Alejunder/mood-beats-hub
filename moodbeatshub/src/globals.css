@@ -10,6 +10,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(145deg, #0d0d0d, #000000);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .app-container {

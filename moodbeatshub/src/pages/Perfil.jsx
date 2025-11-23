@@ -1,4 +1,10 @@
 import { PerfilTemplate } from "../components/templates/PerfilTemplate";
-export function Perfil() {
-  return (<PerfilTemplate />);
+
+export function Perfil({ spotifyAccessToken, tokensLoading }) {
+  return (
+    <PerfilTemplate 
+      spotifyAccessToken={spotifyAccessToken}
+      tokensLoading={tokensLoading}
+    />
+  );
 }

@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import { getTranslatedMoods } from '../../utils/moodTranslations';
 import './styles/EstadoAnimoTemplate.css';
 
 export function EstadoAnimoTemplate() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [moodStats, setMoodStats] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const moods = [
-    { id: 'feliz', emoji: '😊', label: 'Feliz', color: '#FFD93D' },
-    { id: 'triste', emoji: '😢', label: 'Triste', color: '#597081' },
-    { id: 'motivado', emoji: '💪', label: 'Motivado', color: '#9a031e' },
-    { id: 'relajado', emoji: '😌', label: 'Relajado', color: '#d5b9b2' }
-  ];
+  // Obtener moods con traducciones
+  const moods = getTranslatedMoods(t);
 
   // Cargar estadísticas desde localStorage
   useEffect(() => {
@@ -82,14 +81,14 @@ export function EstadoAnimoTemplate() {
     <div className={`estado-animo-container ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <div className="estado-animo-content">
         <div className="estado-animo-header">
-          <h1>📊 Estadísticas de tus Emociones</h1>
-          <p>Visualiza cómo han evolucionado tus estados de ánimo</p>
+          <h1>📊 {t('emotionStats')}</h1>
+          <p>{t('emotionStatsSubtitle')}</p>
         </div>
 
       {/* Gráfico de estadísticas */}
       <div className="mood-stats-section">
         <div className="stats-header">
-          <h2>Tus Emociones Más Frecuentes</h2>
+          <h2>{t('mostFrequent')}</h2>
         </div>
         <div className="stats-chart">
           {sortedMoods.map((mood, index) => (
@@ -115,33 +114,33 @@ export function EstadoAnimoTemplate() {
         </div>
         {Object.keys(moodStats).length > 0 && (
           <div className="stats-total">
-            <p>Total de selecciones: <strong>{Object.values(moodStats).reduce((a, b) => a + b, 0)}</strong></p>
+            <p>{t('totalSelections')}: <strong>{Object.values(moodStats).reduce((a, b) => a + b, 0)}</strong></p>
           </div>
         )}
       </div>
 
       {/* Información adicional */}
       <div className="mood-info-section">
-        <h3>💡 ¿Sabías que?</h3>
+        <h3>💡 {t('didYouKnow')}</h3>
         <div className="info-cards">
           <div className="info-card">
             <span className="info-icon">🎵</span>
-            <p>La música influye directamente en tu estado de ánimo</p>
+            <p>{t('musicInfluence')}</p>
           </div>
           <div className="info-card">
             <span className="info-icon">📈</span>
-            <p>Tracking de emociones te ayuda a conocerte mejor</p>
+            <p>{t('emotionTracking')}</p>
           </div>
           <div className="info-card">
             <span className="info-icon">🎯</span>
-            <p>Cada emoción se vincula con playlists personalizadas</p>
+            <p>{t('emotionLink')}</p>
           </div>
         </div>
       </div>
 
       <div className="action-section">
         <button className="primary-action-btn" onClick={() => navigate('/')}>
-          Seleccionar otra emoción
+          {t('selectAnother')}
         </button>
       </div>
       </div>

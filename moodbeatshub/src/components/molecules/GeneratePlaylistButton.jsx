@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { usePlaylistGeneration } from '../../hooks/usePlaylistGeneration';
 import { supabase } from '../../supabase/supabase.config';
 import CircleLoader from '../atoms/CircleLoader';
+import { PlaylistQuizModal } from '../organisms/PlaylistQuizModal';
 import './GeneratePlaylistButton.css';
 
 /**
- * 🎵 COMPONENTE DE EJEMPLO: BOTÓN PARA GENERAR PLAYLIST
+ * 🎵 COMPONENTE: BOTÓN PARA GENERAR PLAYLIST CON QUIZ
  * 
- * Demuestra cómo usar el sistema completo de generación de playlists
+ * Ahora el quiz es OBLIGATORIO. El botón abre el quiz antes de generar.
  * 
  * Props:
  * - mood: string ('feliz', 'triste', 'motivado', 'relajado')
@@ -17,6 +18,7 @@ const GeneratePlaylistButton = ({ mood, onPlaylistGenerated }) => {
   const { generatePlaylist, loading, error, generatedPlaylist } = usePlaylistGeneration();
   const [currentUser, setCurrentUser] = useState(null);
   const [moodInfo, setMoodInfo] = useState(null);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   // Obtener usuario actual
   useEffect(() => {
@@ -54,17 +56,25 @@ const GeneratePlaylistButton = ({ mood, onPlaylistGenerated }) => {
     }
   }, [mood]);
 
-  // Manejar generación
-  const handleGenerate = async () => {
+  // Abrir el quiz
+  const handleOpenQuiz = () => {
     if (!currentUser || !moodInfo) {
       console.error('Usuario o mood no disponibles');
       return;
     }
+    setShowQuiz(true);
+  };
+
+  // Manejar respuestas del quiz y generar playlist
+  const handleQuizSubmit = async (quizAnswers) => {
+    console.log('📋 Quiz completado:', quizAnswers);
+    setShowQuiz(false);
 
     const result = await generatePlaylist(
       mood,
       currentUser.id,
-      moodInfo.id
+      moodInfo.id,
+      quizAnswers
     );
 
     if (result && onPlaylistGenerated) {
@@ -75,7 +85,7 @@ const GeneratePlaylistButton = ({ mood, onPlaylistGenerated }) => {
   return (
     <div className="generate-playlist-container">
       <button
-        onClick={handleGenerate}
+        onClick={handleOpenQuiz}
         disabled={loading || !currentUser || !moodInfo}
         className="generate-playlist-btn"
       >
@@ -87,7 +97,7 @@ const GeneratePlaylistButton = ({ mood, onPlaylistGenerated }) => {
         ) : (
           <>
             <span className="emoji">{moodInfo?.emoji || '🎵'}</span>
-            <span>Generar Playlist {mood}</span>
+            <span>Personalizar y Generar Playlist</span>
           </>
         )}
       </button>
@@ -112,6 +122,14 @@ const GeneratePlaylistButton = ({ mood, onPlaylistGenerated }) => {
             🎧 Abrir en Spotify
           </a>
         </div>
+      )}
+
+      {/* Modal del Quiz */}
+      {showQuiz && (
+        <PlaylistQuizModal
+          onClose={() => setShowQuiz(false)}
+          onSubmit={handleQuizSubmit}
+        />
       )}
     </div>
   );

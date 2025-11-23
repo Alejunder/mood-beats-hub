@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabase/supabase.config';
+import { useLanguage } from '../../context/LanguageContext';
 import { CircleLoader } from '../atoms/CircleLoader';
 import './styles/HomeTemplate.css';
 
 export function HomeTemplate() {
   const navigate = useNavigate();
+  const { t, language, changeLanguage } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [moodStats, setMoodStats] = useState({});
 
   const moods = [
-    { id: 'feliz', emoji: '😊', label: 'Feliz', color: '#FFD93D', rgb: '255, 217, 61', description: 'Música alegre y optimista' },
-    { id: 'triste', emoji: '😢', label: 'Triste', color: '#597081', rgb: '89, 112, 129', description: 'Melodías melancólicas' },
-    { id: 'motivado', emoji: '💪', label: 'Motivado', color: '#9a031e', rgb: '154, 3, 30', description: 'Ritmos energéticos' },
-    { id: 'relajado', emoji: '😌', label: 'Relajado', color: '#d5b9b2', rgb: '213, 185, 178', description: 'Sonidos tranquilos' }
+    { 
+      id: 'genplaylist', 
+      emoji: '🎵', 
+      label: t('personalizePlaylist'), 
+      color: '#350911', 
+      rgb: '154, 3, 30', 
+      description: t('personalizePlaylistDesc') 
+    },
   ];
 
   useEffect(() => {
@@ -76,18 +82,18 @@ export function HomeTemplate() {
         <div className="header-content">
           <div className="user-info">
             <span className="user-name">
-              {user?.user_metadata?.name || user?.email || 'Usuario'}
+              {user?.user_metadata?.name || user?.email || t('user')}
             </span>
             <button className="logout-button" onClick={handleLogout}>
-              Cerrar sesión
+              {t('logout')}
             </button>
           </div>
         </div>
 
       <main className="home-main">
         <div className="welcome-section">
-          <h2>Escucha tu musica favorita</h2>
-          <p>¿Cómo te sientes hoy? Selecciona tu estado de ánimo</p>
+          <h2>{t('welcomeTitle')}</h2>
+          <p>{t('welcomeSubtitle')}</p>
         </div>
 
         <div className="dashboard-grid">
@@ -108,6 +114,21 @@ export function HomeTemplate() {
           ))}
         </div>
       </main>
+
+      {/* Selector de idioma flotante */}
+      <div className="floating-language-selector">
+        <select 
+          value={language}
+          onChange={(e) => changeLanguage(e.target.value)}
+          className="language-dropdown"
+          aria-label={t('language')}
+        >
+          <option value="es">🇪🇸 Español</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="pt">🇧🇷 Português</option>
+          <option value="fr">🇫🇷 Français</option>
+        </select>
+      </div>
     </div>
   );
 }

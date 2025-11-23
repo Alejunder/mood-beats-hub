@@ -1,6 +1,5 @@
 .home-container {
   min-height: 100vh;
-  background: linear-gradient(145deg, #0d0d0d, #000000);
   padding-left: 65px;
   transition: padding-left 0.3s ease;
 }
@@ -348,4 +347,45 @@
   .card-icon {
     font-size: 3rem;
   }
+}
+
+/* Selector de idioma flotante */
+.floating-language-selector {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.language-dropdown {
+  padding: 10px 15px;
+  background: rgba(23, 23, 23, 0.95);
+  border: 1px solid rgba(213, 185, 178, 0.3);
+  border-radius: 12px;
+  color: #d5b9b2;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.language-dropdown:hover {
+  background: rgba(30, 30, 30, 0.98);
+  border-color: rgba(213, 185, 178, 0.5);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.language-dropdown:focus {
+  outline: none;
+  border-color: #d5b9b2;
+  box-shadow: 0 0 0 3px rgba(213, 185, 178, 0.2);
+}
+
+.language-dropdown option {
+  background: #171717;
+  color: #d5b9b2;
+  padding: 8px;
 }

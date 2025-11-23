@@ -1,5 +1,6 @@
 import { spotifyService } from './spotifyService';
 import { supabase } from '../supabase/supabase.config';
+import { processQuizAnswers } from './playlistQuizService';
 
 /**
  * 🎵 PARÁMETROS DE GENERACIÓN POR MOOD
@@ -58,16 +59,21 @@ const MOOD_PLAYLIST_INFO = {
 /**
  * 🎯 GENERAR PLAYLIST PERSONALIZADA POR MOOD
  * 
- * Crea una playlist en Spotify usando el algoritmo de recomendaciones
- * basado en el estado de ánimo del usuario y sus gustos musicales
+ * Crea una playlist en Spotify 100% BASADA EN EL CUESTIONARIO
+ * SIN usar keywords. Solo usa:
+ * - Géneros seleccionados en el quiz
+ * - Artistas seleccionados en el quiz  
+ * - Intensidad del mood
+ * - Características de audio del mood
  * 
  * @param {string} mood - Estado de ánimo ('feliz', 'triste', 'motivado', 'relajado')
  * @param {string} accessToken - Token de acceso de Spotify
  * @param {string} userId - ID del usuario en Supabase
  * @param {string} moodId - ID del mood en la base de datos
+ * @param {object} quizAnswers - OBLIGATORIO: Respuestas del cuestionario
  * @returns {Promise<object>} Playlist creada con información completa
  */
-export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) => {
+export const generatePlaylistByMood = async (mood, accessToken, userId, moodId, quizAnswers) => {
   try {
     const moodLower = mood.toLowerCase();
     
@@ -76,7 +82,12 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
       throw new Error(`Mood "${mood}" no es válido. Usa: feliz, triste, motivado o relajado`);
     }
 
-    console.log(`🎵 Iniciando generación de playlist para mood: ${mood}`);
+    // Validar que el quiz es obligatorio
+    if (!quizAnswers || typeof quizAnswers !== 'object') {
+      throw new Error('El cuestionario es obligatorio para generar la playlist');
+    }
+
+    console.log(`🎵 Iniciando generación 100% BASADA EN QUIZ para mood: ${mood}`);
 
     // PASO 1: Obtener perfil y datos del usuario
     console.log('📊 Obteniendo datos del usuario de Spotify...');
@@ -96,6 +107,16 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
     console.log(`👤 Usuario: ${userProfile.display_name}`);
     console.log(`🎵 Top tracks obtenidos: ${topTracks.items.length}`);
     console.log(`🎤 Top artistas obtenidos: ${topArtists.items.length}`);
+
+    // 📝 Procesar respuestas del cuestionario si se proporcionaron (DESPUÉS de obtener top artists)
+    let quizParams = null;
+    if (quizAnswers) {
+      console.log('📝 Procesando respuestas del cuestionario...');
+      // Obtener nombres de top artistas para el quiz
+      const userTopArtistNames = (topArtists.items || []).map(a => a.name);
+      quizParams = processQuizAnswers(quizAnswers, userTopArtistNames);
+      console.log('🎯 Parámetros del quiz:', quizParams);
+    }
 
     // PASO 2: Extraer seeds (semillas) para las recomendaciones
     const seedTracks = topTracks.items.slice(0, 2).map(track => track.id).filter(id => id);
@@ -197,94 +218,507 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
     console.log(`🎯 Total de seeds: ${totalSeeds}`);
     console.log('🎯 Parámetros de recomendación:', JSON.stringify(recommendationParams, null, 2));
 
-    // 🧪 PRUEBA: Intentar con parámetros mínimos primero
-    console.log('🧪 PRUEBA 1: Intentando con solo seeds (sin target_* parameters)...');
-    let recommendations;
+    // ========================================
+    // ALGORITMO 100% BASADO EN QUIZ (SIN KEYWORDS)
+    // ========================================
     
-    try {
-      // Intentar con parámetros mínimos (solo seeds)
-      const minimalParams = {
-        limit: 30
+    console.log('🔄 Usando algoritmo 100% basado en CUESTIONARIO (SIN keywords)');
+    
+    // PASO 3A: Solo géneros del mood como fallback
+    const searchQueries = [];
+    
+    // Géneros por mood (SOLO como fallback si no hay géneros del usuario)
+    const moodGenresFallback = {
+      feliz: ['pop', 'dance', 'latin', 'reggaeton', 'disco', 'funk'],
+      triste: ['indie', 'alternative', 'acoustic', 'ballad', 'soul'],
+      motivado: ['rock', 'hip-hop', 'electronic', 'metal', 'edm', 'trap'],
+      relajado: ['jazz', 'acoustic', 'ambient', 'lofi', 'classical', 'chill']
+    };
+    
+    console.log(`🎯 Géneros fallback para mood "${moodLower}":`, moodGenresFallback[moodLower]);
+    
+    // 🎯 PARÁMETROS DEL CUESTIONARIO (OBLIGATORIOS)
+    let targetGenres = Array.isArray(quizParams?.genres) ? quizParams.genres : [];
+    let targetArtists = Array.isArray(quizParams?.artists) ? quizParams.artists : [];
+    let intensityMultiplier = quizParams?.intensity?.multiplier || quizParams?.intensityMultiplier || 1.0;
+    
+    console.log('✨ Configuración del QUIZ:');
+    console.log('  📊 Géneros:', targetGenres.length > 0 ? targetGenres : 'Del usuario');
+    console.log('  🎤 Artistas:', targetArtists.length > 0 ? targetArtists : 'Favoritos');
+    console.log('  🔥 Intensidad:', intensityMultiplier + 'x');
+    
+    // Obtener géneros de los top artistas (si no hay géneros del quiz)
+    let userGenres = [];
+    if (topArtists.items && Array.isArray(topArtists.items) && topArtists.items.length > 0) {
+      const allGenres = topArtists.items.flatMap(artist => artist.genres || []);
+      userGenres = [...new Set(allGenres)].slice(0, 5);
+      console.log('🎭 Géneros del usuario:', userGenres);
+    }
+    
+    // 🎯 DECISIÓN: USAR SELECCIÓN DEL USUARIO AL 100%
+    // Si seleccionó géneros específicos → SOLO esos géneros
+    // Si seleccionó "aleatorio" → usar géneros del usuario o fallback
+    const finalGenres = targetGenres.length > 0 ? targetGenres : userGenres;
+    const useCustomGenres = targetGenres.length > 0;
+    
+    // Obtener top artistas (solo si NO seleccionó artistas específicos)
+    let topArtistNames = [];
+    if (topArtists.items && Array.isArray(topArtists.items) && topArtists.items.length > 0) {
+      topArtistNames = topArtists.items.slice(0, 10).map(a => a.name);
+      console.log('🎤 Top artistas del usuario:', topArtistNames.slice(0, 5), '...');
+    }
+    
+    // 🎯 DECISIÓN: USAR SELECCIÓN DEL USUARIO AL 100%
+    // Si seleccionó artistas específicos → SOLO esos artistas
+    // Si seleccionó "aleatorio" → usar favoritos del usuario
+    let finalArtists = [];
+    const useCustomArtists = targetArtists.length > 0;
+    
+    if (useCustomArtists) {
+      // Usuario eligió artistas específicos → SOLO usar esos
+      finalArtists = targetArtists;
+      console.log('✨ Usando SOLO artistas seleccionados por el usuario (100%):', finalArtists);
+    } else if (topArtistNames.length > 0) {
+      // Usuario eligió "aleatorio" → usar sus favoritos
+      finalArtists = topArtistNames.slice(0, 5);
+      console.log('🎲 Usuario seleccionó aleatorio, usando favoritos:', finalArtists.slice(0, 3), '...');
+    } else {
+      // No hay favoritos → usar artistas por defecto del mood
+      const defaultArtistsByMood = {
+        feliz: ['Dua Lipa', 'Bruno Mars', 'The Weeknd'],
+        triste: ['Adele', 'Billie Eilish', 'Sam Smith'],
+        motivado: ['Eminem', 'Imagine Dragons', 'Queen'],
+        relajado: ['Norah Jones', 'Ed Sheeran', 'John Mayer']
       };
+      finalArtists = defaultArtistsByMood[moodLower] || [];
+      console.warn('⚠️ Sin artistas, usando fallback del mood:', finalArtists);
+    }
+    
+    // ========================================
+    // ESTRATEGIA: EXCLUSIVAMENTE LO QUE EL USUARIO ELIGIÓ
+    // SIN FALLBACKS, SIN MEZCLAS, SIN EXCEPCIONES
+    // ========================================
+    
+    console.log('\n🎯 MODO EXCLUSIVO: SOLO LO QUE EL USUARIO ELIGIÓ');
+    console.log(`   Artistas personalizados: ${useCustomArtists ? 'SÍ' : 'NO (favoritos)'}`);
+    console.log(`   Géneros personalizados: ${useCustomGenres ? 'SÍ' : 'NO (del usuario)'}`);
+    
+    // ⭐ CASO 1: Usuario seleccionó ARTISTAS ESPECÍFICOS
+    if (useCustomArtists && finalArtists.length > 0) {
+      console.log('🎯 EXCLUSIVAMENTE estos artistas:', finalArtists);
+      console.log('   ⚠️ Sin mezclas, sin fallbacks, sin otros artistas');
       
-      if (recommendationParams.seed_tracks) {
-        minimalParams.seed_tracks = recommendationParams.seed_tracks;
+      // SOLO buscar por los artistas seleccionados
+      finalArtists.forEach(artistName => {
+        searchQueries.push({
+          artists: [artistName],
+          limit: 100
+        });
+      });
+      
+      // Si también seleccionó géneros específicos → combinar
+      if (useCustomGenres && finalGenres.length > 0) {
+        console.log('   Y EXCLUSIVAMENTE estos géneros:', finalGenres);
+        finalArtists.forEach(artist => {
+          finalGenres.forEach(genre => {
+            searchQueries.push({
+              artists: [artist],
+              genres: [genre],
+              limit: 50
+            });
+          });
+        });
       }
-      if (recommendationParams.seed_artists) {
-        minimalParams.seed_artists = recommendationParams.seed_artists;
-      }
-      if (recommendationParams.seed_genres) {
-        minimalParams.seed_genres = recommendationParams.seed_genres;
-      }
+    } 
+    // ⭐ CASO 2: Usuario seleccionó "ALEATORIO" en artistas
+    else if (!useCustomArtists) {
+      console.log('🎲 Modo aleatorio en artistas');
       
-      console.log('  📋 Parámetros mínimos:', JSON.stringify(minimalParams, null, 2));
-      recommendations = await spotifyService.getRecommendations(
-        minimalParams,
-        accessToken
-      );
-      console.log('  ✅ FUNCIONA con parámetros mínimos');
-      
-    } catch (minimalError) {
-      console.error('  ❌ Falla incluso con parámetros mínimos:', minimalError.message);
-      
-      // 🧪 PRUEBA 2: Intentar con solo 1 seed_track
-      console.log('🧪 PRUEBA 2: Intentando con solo 1 seed_track...');
-      try {
-        const singleTrackParams = {
-          seed_tracks: [verifiedTracks[0]],
-          limit: 30
-        };
-        console.log('  📋 Usando solo:', singleTrackParams.seed_tracks[0]);
+      // Si seleccionó géneros específicos → SOLO esos géneros
+      if (useCustomGenres && finalGenres.length > 0) {
+        console.log('🎯 EXCLUSIVAMENTE estos géneros:', finalGenres);
+        finalGenres.forEach(genre => {
+          searchQueries.push({
+            genres: [genre],
+            limit: 100
+          });
+        });
+      } 
+      // Si seleccionó aleatorio en géneros también → usar favoritos
+      else {
+        console.log('🎲 Usando artistas favoritos');
+        if (finalArtists.length > 0) {
+          finalArtists.slice(0, 5).forEach(artistName => {
+            searchQueries.push({
+              artists: [artistName],
+              limit: 50
+            });
+          });
+        }
         
-        recommendations = await spotifyService.getRecommendations(
-          singleTrackParams,
-          accessToken
-        );
-        console.log('  ✅ FUNCIONA con 1 seed_track');
+        if (finalGenres.length > 0) {
+          finalGenres.slice(0, 5).forEach(genre => {
+            searchQueries.push({
+              genres: [genre],
+              limit: 50
+            });
+          });
+        }
         
-      } catch (singleTrackError) {
-        console.error('  ❌ Falla con 1 seed_track:', singleTrackError.message);
-        
-        // 🧪 PRUEBA 3: Intentar con seed_genres
-        console.log('🧪 PRUEBA 3: Intentando con seed_genres...');
-        try {
-          const genreParams = {
-            seed_genres: ['pop', 'dance'],
-            limit: 30
-          };
-          console.log('  📋 Usando géneros:', genreParams.seed_genres);
-          
-          recommendations = await spotifyService.getRecommendations(
-            genreParams,
-            accessToken
-          );
-          console.log('  ✅ FUNCIONA con géneros');
-          
-        } catch (genreError) {
-          console.error('  ❌ Falla con géneros:', genreError.message);
-          throw new Error('El endpoint /recommendations no está disponible para tu cuenta. Esto puede ser una restricción regional o de la API de Spotify.');
+        // Combinación
+        if (finalArtists.length > 0 && finalGenres.length > 0) {
+          finalArtists.slice(0, 2).forEach(artist => {
+            finalGenres.slice(0, 2).forEach(genre => {
+              searchQueries.push({
+                artists: [artist],
+                genres: [genre],
+                limit: 30
+              });
+            });
+          });
         }
       }
     }
-
-    // PASO 3: Obtener recomendaciones de Spotify (con manejo de errores mejorado)
-    // const recommendations = await spotifyService.getRecommendations(
-    //   recommendationParams,
-    //   accessToken
-    // );
+    
+    if (searchQueries.length === 0) {
+      throw new Error('No se pudieron crear búsquedas con la selección del usuario');
+    }
+    
+    console.log(`🔍 Total de búsquedas a ejecutar: ${searchQueries.length}`);
+    
+    // PASO 3B: Ejecutar búsquedas y recolectar tracks
+    let allCandidateTracks = [];
+    
+    for (const query of searchQueries) {
+      try {
+        console.log(`  🔍 Buscando con query:`, query);
+        const searchResult = await spotifyService.searchTracksAdvanced(
+          { ...query, limit: 50 },
+          accessToken
+        );
+        
+        console.log(`  📦 Resultado de búsqueda:`, searchResult);
+        
+        if (searchResult.tracks && searchResult.tracks.items) {
+          allCandidateTracks.push(...searchResult.tracks.items);
+          console.log(`  ✅ Encontrados ${searchResult.tracks.items.length} tracks para "${query.mood}"`);
+        } else {
+          console.warn(`  ⚠️ Sin tracks en resultado para "${query.mood}"`);
+        }
+      } catch (error) {
+        console.error(`  ❌ Error en búsqueda "${query.mood}":`, error.message);
+      }
+    }
+    
+    // Eliminar duplicados
+    const uniqueTracks = allCandidateTracks.filter((track, index, self) =>
+      index === self.findIndex(t => t.id === track.id)
+    );
+    
+    console.log(`📊 Total de tracks candidatos únicos: ${uniqueTracks.length}`);
+    
+    if (uniqueTracks.length === 0) {
+      throw new Error('No se encontraron canciones que coincidan con tu estado de ánimo. Intenta de nuevo.');
+    }
+    
+    // PASO 3C: FILTRADO EXCLUSIVO según selección
+    console.log('📊 Aplicando filtros EXCLUSIVOS...');
+    
+    let selectedTracks = [...uniqueTracks];
+    
+    // FILTRO 1: Si seleccionó artistas específicos → SOLO esos artistas
+    if (useCustomArtists && finalArtists.length > 0) {
+      console.log('🎯 FILTRO: SOLO artistas seleccionados');
+      selectedTracks = selectedTracks.filter(track => {
+        const isFromSelectedArtist = track.artists.some(artist => 
+          finalArtists.some(selectedArtist => 
+            selectedArtist.toLowerCase() === artist.name.toLowerCase()
+          )
+        );
+        return isFromSelectedArtist;
+      });
+      
+      console.log(`   Después del filtro: ${selectedTracks.length} tracks`);
+      console.log(`   EXCLUSIVAMENTE de: ${finalArtists.join(', ')}`);
+      
+      if (selectedTracks.length === 0) {
+        throw new Error(`No se encontraron canciones de: ${finalArtists.join(', ')}`);
+      }
+    }
+    
+    // FILTRO 2: Si seleccionó géneros → preferir esos géneros (filtro suave)
+    if (useCustomGenres && finalGenres.length > 0) {
+      console.log('🎯 PRIORIZACIÓN: Géneros seleccionados');
+      console.log(`   Buscando géneros: ${finalGenres.join(', ')}`);
+      
+      // Obtener información de géneros de los artistas
+      const tracksWithGenres = selectedTracks.map(track => {
+        const trackGenres = track.artists.flatMap(artist => {
+          const artistData = topArtists.items.find(a => a.id === artist.id);
+          return artistData?.genres || [];
+        });
+        return { track, genres: trackGenres };
+      });
+      
+      // Intentar filtrar por géneros
+      const filteredByGenre = tracksWithGenres.filter(item => {
+        const hasSelectedGenre = item.genres.some(genre => 
+          finalGenres.some(selectedGenre => 
+            genre.toLowerCase().includes(selectedGenre.toLowerCase()) ||
+            selectedGenre.toLowerCase().includes(genre.toLowerCase())
+          )
+        );
+        return hasSelectedGenre;
+      });
+      
+      // Si encontró canciones con ese género, usarlas
+      if (filteredByGenre.length > 0) {
+        selectedTracks = filteredByGenre.map(item => item.track);
+        console.log(`   ✅ ${selectedTracks.length} tracks del género seleccionado`);
+      } else {
+        // Si no encontró, mantener todas pero avisar
+        console.log(`   ⚠️ No se encontraron tracks con información de género`);
+        console.log(`   📌 Usando todas las canciones encontradas (${selectedTracks.length})`);
+      }
+    }
+    
+    // Ordenar por popularidad
+    selectedTracks = selectedTracks
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+      .slice(0, 50); // Máximo 50 para el scoring
+    
+    console.log(`✅ Tracks después de filtros EXCLUSIVOS: ${selectedTracks.length}`);
+    
+    if (selectedTracks.length === 0) {
+      throw new Error('No se encontraron canciones que cumplan con tu selección');
+    }
+    
+    // SCORING 100% BASADO EN QUIZ (SIN KEYWORDS)
+    console.log('🎯 Aplicando scoring basado SOLO en QUIZ...');
+    
+    // NO filtramos por keywords, usamos todos los tracks
+    const filteredByMood = selectedTracks;
+    console.log(`  ✅ Tracks para scoring: ${filteredByMood.length}`);
+    
+    // Calcular score solo con quiz
+    console.log('  📊 Calculando score (SIN keywords)...');
+    
+    // Pesos de scoring (SIN keywords)
+    let scoringWeights = {
+      popularity: 0.1,       // Peso de popularidad
+      quizArtist: 50,        // Artista del quiz (MÁXIMA PRIORIDAD)
+      favoriteArtist: 25,    // Artista favorito
+      quizGenre: 30,         // Género del quiz (ALTA PRIORIDAD)
+      moodGenre: 15          // Género del mood (fallback)
+    };
+    
+    if (intensityMultiplier !== 1.0) {
+      console.log(`  🔥 Ajustando por intensidad (${intensityMultiplier}x)...`);
+      scoringWeights.quizArtist *= intensityMultiplier;
+      scoringWeights.quizGenre *= intensityMultiplier;
+      scoringWeights.moodGenre *= intensityMultiplier;
+      console.log('  📊 Pesos ajustados:', scoringWeights);
+    }
+    
+    const scoredForMood = filteredByMood.map(track => {
+      let score = 0;
+      const trackName = track.name.toLowerCase();
+      const albumName = (track.album?.name || '').toLowerCase();
+      const artistNames = track.artists.map(a => a.name.toLowerCase()).join(' ');
+      const allText = `${trackName} ${albumName} ${artistNames}`;
+      const scoreBreakdown = [];
+      
+      // FACTOR 1: Popularidad base
+      const popScore = (track.popularity || 50) * scoringWeights.popularity;
+      score += popScore;
+      scoreBreakdown.push(`Pop:${popScore.toFixed(1)}`);
+      
+      // FACTOR 2A: 🎯 ARTISTA SELECCIONADO (MÁXIMA PRIORIDAD)
+      let quizArtistBonus = 0;
+      const isFromSelectedArtist = track.artists.some(artist => 
+        finalArtists.some(selectedArtist => 
+          selectedArtist.toLowerCase() === artist.name.toLowerCase()
+        )
+      );
+      
+      if (isFromSelectedArtist) {
+        // Si el usuario seleccionó artistas específicos → PRIORIDAD ABSOLUTA
+        if (useCustomArtists) {
+          // En modo estricto, TODOS los tracks son del artista, así que damos puntos base altos
+          quizArtistBonus = scoringWeights.quizArtist * 3; // Triple puntos
+          scoreBreakdown.push(`✨✨✨Selected:+${quizArtistBonus}`);
+        } else {
+          // Si es "aleatorio" (favoritos) → puntos normales
+          quizArtistBonus = scoringWeights.favoriteArtist;
+          scoreBreakdown.push(`⭐FavArtist:+${quizArtistBonus}`);
+        }
+        score += quizArtistBonus;
+      } else if (useCustomArtists) {
+        // Si está en modo estricto y NO es del artista → ERROR (no debería pasar)
+        console.warn(`⚠️ Track NO es del artista seleccionado: ${track.artists[0].name} - ${track.name}`);
+      }
+      
+      // FACTOR 3: ELIMINADO - Ya NO usamos keywords
+      
+      // FACTOR 4A: 🎸 GÉNERO SELECCIONADO (PRIORIDAD ALTA)
+      let quizGenreBonus = 0;
+      const trackGenres = track.artists.flatMap(artist => {
+        const artistData = topArtists.items.find(a => a.id === artist.id);
+        return artistData?.genres || [];
+      });
+      
+      const selectedGenreMatches = trackGenres.filter(genre => 
+        finalGenres.some(selectedGenre => 
+          genre.toLowerCase().includes(selectedGenre.toLowerCase()) || 
+          selectedGenre.toLowerCase().includes(genre.toLowerCase())
+        )
+      );
+      
+      if (selectedGenreMatches.length > 0) {
+        // Si el usuario seleccionó géneros específicos → PRIORIDAD ALTA
+        if (useCustomGenres) {
+          quizGenreBonus = selectedGenreMatches.length * scoringWeights.quizGenre * 1.5; // 50% más puntos
+          scoreBreakdown.push(`✨SelectedGenre:+${quizGenreBonus}(x${selectedGenreMatches.length})`);
+        } else {
+          // Si es "aleatorio" (géneros del usuario) → puntos normales
+          quizGenreBonus = selectedGenreMatches.length * scoringWeights.quizGenre;
+          scoreBreakdown.push(`QuizGenre:+${quizGenreBonus}(x${selectedGenreMatches.length})`);
+        }
+        score += quizGenreBonus;
+      }
+      
+      // FACTOR 4B: Género compatible con el mood (menor peso que quiz)
+      // Reutilizamos trackGenres de arriba
+      const moodGenreMatches = trackGenres.filter(genre => 
+        moodGenresFallback[moodLower].some(moodGenre => 
+          genre.toLowerCase().includes(moodGenre) || moodGenre.includes(genre.toLowerCase())
+        )
+      );
+      
+      if (moodGenreMatches.length > 0 && quizGenreBonus === 0) {
+        const genreScore = moodGenreMatches.length * scoringWeights.moodGenre;
+        score += genreScore;
+        scoreBreakdown.push(`MoodGenre:+${genreScore}(x${moodGenreMatches.length})`);
+      }
+      
+      // Log detallado del scoring
+      console.log(`    📊 ${score.toFixed(1)} pts: ${track.artists[0].name} - ${track.name}`);
+      console.log(`       [${scoreBreakdown.join(' | ')}]`);
+      
+      return { 
+        track, 
+        score,
+        genreMatches: moodGenreMatches.length,
+        quizArtistMatch: quizArtistBonus > 0,
+        quizGenreMatch: quizGenreBonus > 0
+      };
+    });
+    
+    // FILTRO 3: Descartar tracks con score bajo
+    const minScore = 10; // Sin keywords, score más bajo
+    const highScoringTracks = scoredForMood.filter(item => item.score >= minScore);
+    
+    console.log(`  ⚖️ Filtro: score >= ${minScore}`);
+    console.log(`    ✅ Tracks válidos: ${highScoringTracks.length}/${scoredForMood.length}`);
+    
+    if (highScoringTracks.length < 20) {
+      console.warn('  ⚠️ Pocos tracks, tomando todos...');
+      highScoringTracks.length = 0;
+      highScoringTracks.push(...scoredForMood
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 50)
+      );
+    }
+    
+    // ORDENAR por score y tomar los mejores
+    const sortedByMoodScore = highScoringTracks.sort((a, b) => b.score - a.score);
+    
+    // SELECCIÓN FINAL: Tomar lo que haya disponible (puede ser menos de 30)
+    const finalCount = Math.min(30, sortedByMoodScore.length);
+    
+    console.log(`  📊 Tracks disponibles después de filtros: ${sortedByMoodScore.length}`);
+    console.log(`  📊 Seleccionando: ${finalCount} tracks (puede ser menos de 30)`);
+    
+    // Tomar los mejores por score
+    let finalSelectedTracks = sortedByMoodScore
+      .slice(0, finalCount)
+      .map(item => item.track);
+    
+    // Mezclar orden para variedad
+    finalSelectedTracks.sort(() => Math.random() - 0.5);
+    
+    if (finalSelectedTracks.length < 30) {
+      console.warn(`⚠️ ADVERTENCIA: Playlist con solo ${finalSelectedTracks.length} canciones`);
+      console.warn(`   Esto es normal cuando se seleccionan artistas/géneros muy específicos`);
+    }
+    
+    // LOGS DETALLADOS
+    console.log('\n📊 === ANÁLISIS FINAL (EXCLUSIVO) ===');
+    console.log(`✅ Tracks en la playlist: ${finalSelectedTracks.length}`);
+    console.log(`   Seleccionados por score y filtros exclusivos`);
+    
+    const avgScore = sortedByMoodScore.slice(0, finalCount).reduce((sum, t) => sum + t.score, 0) / finalCount;
+    console.log(`   - Score promedio: ${avgScore.toFixed(1)}`);
+    
+    const tracksWithGenres = sortedByMoodScore.slice(0, finalCount).filter(t => t.genreMatches > 0).length;
+    console.log(`   - Con género del mood: ${tracksWithGenres}/${finalCount} (${(tracksWithGenres/finalCount*100).toFixed(0)}%)`);
+    
+    // Estadísticas de selección del usuario
+    const tracksFromSelectedArtists = sortedByMoodScore.slice(0, finalCount).filter(t => t.quizArtistMatch).length;
+    const tracksFromSelectedGenres = sortedByMoodScore.slice(0, finalCount).filter(t => t.quizGenreMatch).length;
+    
+    console.log('\n✨ === ESTADÍSTICAS DE SELECCIÓN ===');
+    if (useCustomArtists && finalArtists.length > 0) {
+      console.log(`   🎤 Artistas SELECCIONADOS: ${tracksFromSelectedArtists}/${finalCount} (${(tracksFromSelectedArtists/finalCount*100).toFixed(0)}%)`);
+      console.log(`      ${finalArtists.join(', ')}`);
+    } else if (finalArtists.length > 0) {
+      console.log(`   🎤 Artistas FAVORITOS (aleatorio): ${tracksFromSelectedArtists}/${finalCount} (${(tracksFromSelectedArtists/finalCount*100).toFixed(0)}%)`);
+      console.log(`      ${finalArtists.slice(0, 3).join(', ')}...`);
+    }
+    
+    if (useCustomGenres && finalGenres.length > 0) {
+      console.log(`   🎸 Géneros SELECCIONADOS: ${tracksFromSelectedGenres}/${finalCount} (${(tracksFromSelectedGenres/finalCount*100).toFixed(0)}%)`);
+      console.log(`      ${finalGenres.join(', ')}`);
+    } else if (finalGenres.length > 0) {
+      console.log(`   🎸 Géneros DEL USUARIO (aleatorio): ${tracksFromSelectedGenres}/${finalCount} (${(tracksFromSelectedGenres/finalCount*100).toFixed(0)}%)`);
+      console.log(`      ${finalGenres.slice(0, 3).join(', ')}...`);
+    }
+    
+    console.log(`   🔥 Intensidad: ${intensityMultiplier}x`);
+    
+    console.log('\n🏆 TOP 10 TRACKS:');
+    sortedByMoodScore.slice(0, 10).forEach((item, i) => {
+      const indicators = [];
+      if (item.genreMatches > 0) indicators.push(`🎸x${item.genreMatches}`);
+      if (item.quizArtistMatch) indicators.push('✨Quiz');
+      if (item.quizGenreMatch) indicators.push('✨Genre');
+      if (Array.isArray(topArtistNames) && topArtistNames.length > 0 && topArtistNames.slice(0, 10).some(fav => 
+        item.track.artists.some(a => a.name.toLowerCase() === fav.toLowerCase())
+      )) indicators.push('⭐Fav');
+      
+      console.log(`  ${i + 1}. [${item.score.toFixed(0)}] ${indicators.join(' ')} ${item.track.artists[0].name} - ${item.track.name}`);
+    });
+    console.log('===================================\n');
+    
+    // Construir objeto de recomendaciones compatible
+    const recommendations = {
+      tracks: finalSelectedTracks
+    };
 
     console.log(`✅ Recomendaciones obtenidas: ${recommendations.tracks.length} tracks`);
 
     // PASO 4: Crear playlist en Spotify
     const playlistInfo = MOOD_PLAYLIST_INFO[moodLower];
-    const timestamp = new Date().toLocaleDateString('es-ES', { 
+    
+    // ✅ Usar el nombre personalizado del usuario o uno por defecto
+    const playlistName = quizAnswers.playlistName || `${playlistInfo.namePrefix} - ${new Date().toLocaleDateString('es-ES', { 
       day: '2-digit', 
       month: '2-digit', 
       year: 'numeric' 
-    });
+    })}`;
     
     const playlistData = {
-      name: `${playlistInfo.namePrefix} - ${timestamp}`,
+      name: playlistName,
       description: playlistInfo.description,
       public: false // Privada por defecto
     };
@@ -308,7 +742,7 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
 
     console.log(`🎶 ${trackUris.length} tracks agregados a la playlist`);
 
-    // PASO 6: Guardar en Supabase (el trigger auto-guardará en user_favorites)
+    // PASO 6: Preparar información completa (NO guardar automáticamente)
     const playlistImageUrl = createdPlaylist.images?.[0]?.url || null;
     
     const generationParams = {
@@ -329,26 +763,7 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
       generated_at: new Date().toISOString()
     };
 
-    const { data: savedPlaylist, error: saveError } = await supabase
-      .from('spotify_playlists')
-      .insert({
-        spotify_playlist_id: createdPlaylist.id,
-        name: createdPlaylist.name,
-        description: createdPlaylist.description,
-        image_url: playlistImageUrl,
-        spotify_url: createdPlaylist.external_urls.spotify,
-        is_generated: true,
-        generation_params: generationParams
-      })
-      .select()
-      .single();
-
-    if (saveError) {
-      console.error('❌ Error guardando en Supabase:', saveError);
-      throw saveError;
-    }
-
-    console.log('💾 Playlist guardada en Supabase (trigger activado para user_favorites)');
+    console.log('✅ Playlist creada en Spotify (NO guardada en BD aún - se guardará al marcar como favorita)');
 
     // PASO 7: Retornar información completa
     return {
@@ -361,7 +776,9 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
         imageUrl: playlistImageUrl,
         trackCount: trackUris.length,
         mood: moodLower,
-        supabaseId: savedPlaylist.id
+        userId: userId,
+        moodId: moodId,
+        generationParams: generationParams // ✨ Incluir para guardar después
       },
       tracks: recommendations.tracks.map(track => ({
         id: track.id,
@@ -393,30 +810,28 @@ export const generatePlaylistByMood = async (mood, accessToken, userId, moodId) 
 export const getUserGeneratedPlaylists = async (userId) => {
   try {
     const { data, error } = await supabase
-      .from('user_favorites')
+      .from('spotify_playlists')
       .select(`
         id,
-        created_at,
+        spotify_playlist_id,
+        name,
+        description,
+        image_url,
+        spotify_url,
+        is_generated,
+        is_favorite,
         mood_id,
+        generation_params,
+        created_at,
+        updated_at,
         moods (
           name,
           emoji,
           color_hex
-        ),
-        playlist_id,
-        spotify_playlists (
-          spotify_playlist_id,
-          name,
-          description,
-          image_url,
-          spotify_url,
-          is_generated,
-          generation_params,
-          cached_at
         )
       `)
       .eq('user_id', userId)
-      .eq('spotify_playlists.is_generated', true)
+      .eq('is_generated', true)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -436,20 +851,12 @@ export const getUserGeneratedPlaylists = async (userId) => {
  */
 export const deleteGeneratedPlaylist = async (playlistId, userId) => {
   try {
-    // Primero eliminar de user_favorites
-    const { error: favoriteError } = await supabase
-      .from('user_favorites')
-      .delete()
-      .eq('playlist_id', playlistId)
-      .eq('user_id', userId);
-
-    if (favoriteError) throw favoriteError;
-
-    // Luego eliminar de spotify_playlists
+    // Eliminar directamente de spotify_playlists
     const { error: playlistError } = await supabase
       .from('spotify_playlists')
       .delete()
-      .eq('id', playlistId);
+      .eq('id', playlistId)
+      .eq('user_id', userId); // ✅ Validación de usuario
 
     if (playlistError) throw playlistError;
 

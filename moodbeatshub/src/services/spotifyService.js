@@ -46,6 +46,12 @@ export const spotifyService = {
     return spotifyFetch(url, accessToken);
   },
 
+  searchArtists: async (query, accessToken, limit = 10) => {
+    const encodedQuery = encodeURIComponent(query);
+    const url = `${SPOTIFY_API_BASE}/search?q=${encodedQuery}&type=artist&limit=${limit}`;
+    return spotifyFetch(url, accessToken);
+  },
+
   getUserTopTracks: async (accessToken, limit = 20, timeRange = 'medium_term') => {
     const url = `${SPOTIFY_API_BASE}/me/top/tracks?limit=${limit}&time_range=${timeRange}`;
     return spotifyFetch(url, accessToken);
@@ -130,6 +136,37 @@ export const spotifyService = {
     }
 
     return response.json();
+  },
+
+  /**
+   * 🗑️ ELIMINAR PLAYLIST DE SPOTIFY
+   * Elimina (unfollow) una playlist de la cuenta del usuario
+   * 
+   * @param {string} playlistId - ID de la playlist en Spotify
+   * @param {string} accessToken - Token de acceso
+   * @returns {Promise<void>}
+   * 
+   * IMPORTANTE: Requiere scope 'playlist-modify-public' o 'playlist-modify-private'
+   * Solo el dueño de la playlist puede eliminarla
+   */
+  deletePlaylist: async (playlistId, accessToken) => {
+    const url = `${SPOTIFY_API_BASE}/playlists/${playlistId}/followers`;
+    
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error?.message || `Error eliminando playlist: ${response.status}`);
+    }
+
+    // DELETE retorna 200 sin body si es exitoso
+    return { success: true };
   },
 
   /**
@@ -285,6 +322,52 @@ export const spotifyService = {
     }
     const ids = artistIds.slice(0, 50).join(','); // Máximo 50 artistas
     const url = `${SPOTIFY_API_BASE}/artists?ids=${ids}`;
+    return spotifyFetch(url, accessToken);
+  },
+
+  /**
+   * 🔍 BUSCAR TRACKS CON FILTROS (ALTERNATIVA A /recommendations)
+   * Busca tracks usando queries de búsqueda avanzada
+   * 
+   * @param {object} params - Parámetros de búsqueda
+   * @param {string[]} params.genres - Géneros musicales
+   * @param {string[]} params.artists - Nombres de artistas
+   * @param {number} params.year - Año (para variedad)
+   * @param {string} params.mood - Término de mood para la búsqueda
+   * @param {number} params.limit - Número de resultados
+   * @param {string} accessToken - Token de acceso
+   * @returns {Promise<object>} Tracks encontrados
+   */
+  searchTracksAdvanced: async (params, accessToken) => {
+    const { genres = [], artists = [], year, mood, limit = 50 } = params;
+    
+    // Construir query de búsqueda simple (Spotify search es sensible)
+    let query = '';
+    
+    // Prioridad: mood keyword (más genérico funciona mejor)
+    if (mood) {
+      query = mood;
+    }
+    
+    // Si tenemos artista, agregar
+    if (artists && artists.length > 0 && artists[0]) {
+      query = artists[0]; // Solo el artista, más simple
+    }
+    
+    // Si tenemos género, usar solo género
+    if (genres && genres.length > 0 && genres[0]) {
+      query = `genre:${genres[0]}`;
+    }
+    
+    // Fallback a un término genérico
+    if (!query) {
+      query = year ? `year:${year}` : 'popular';
+    }
+    
+    console.log(`    🔎 Query final: "${query}"`);
+    
+    const url = `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(query)}&type=track&limit=${limit}`;
+    
     return spotifyFetch(url, accessToken);
   }
 };

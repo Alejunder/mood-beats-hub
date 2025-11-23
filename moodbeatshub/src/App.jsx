@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "./supabase/supabase.config";
 import { useSpotifyTokens } from "./hooks/useSpotifyTokens";
+import { LanguageProvider } from "./context/LanguageContext";
+import { SettingsProvider } from "./context/SettingsContext";
 import { Sidebar } from "./components/organisms/Sidebar";
 import { MyRoutes } from "./routes/routes";
 import { CircleLoader } from "./components/atoms/CircleLoader";
@@ -43,24 +45,28 @@ function App() {
   }
 
   // Rutas donde no se debe mostrar la sidebar
-  const routesWithoutSidebar = ['/login', '/feliz', '/triste', '/motivado', '/relajado'];
+  const routesWithoutSidebar = ['/login', '/genplaylist'];
   const showSidebar = user && !routesWithoutSidebar.includes(location.pathname);
 
   return (
-    <div className="app-container">
-      {showSidebar && (
-        <Sidebar
-          state={sidebarOpen}
-          setState={() => setSidebarOpen(!sidebarOpen)}
-        />
-      )}
-      <MyRoutes 
-        user={user} 
-        spotifyAccessToken={spotifyAccessToken}
-        spotifyRefreshToken={spotifyRefreshToken}
-        tokensLoading={tokensLoading}
-      />
-    </div>
+    <LanguageProvider>
+      <SettingsProvider>
+        <div className="app-container">
+          {showSidebar && (
+            <Sidebar
+              state={sidebarOpen}
+              setState={() => setSidebarOpen(!sidebarOpen)}
+            />
+          )}
+          <MyRoutes 
+            user={user} 
+            spotifyAccessToken={spotifyAccessToken}
+            spotifyRefreshToken={spotifyRefreshToken}
+            tokensLoading={tokensLoading}
+          />
+        </div>
+      </SettingsProvider>
+    </LanguageProvider>
   );
 }
 
