@@ -66,17 +66,38 @@ function App() {
 
 
   useEffect(() => {
-    // Verificar sesión actual
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Verificar sesión actual y manejar OAuth redirect
+    const initializeAuth = async () => {
+      try {
+        // Intentar obtener sesión de la URL (importante para iOS)
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error obteniendo sesión:', error);
+        }
+        
+        setUser(session?.user ?? null);
+      } catch (error) {
+        console.error('Error en inicialización de auth:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
 
     // Escuchar cambios de autenticación
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event);
+      
+      // Manejar específicamente el evento SIGNED_IN para iOS
+      if (event === 'SIGNED_IN' && session) {
+        setUser(session.user);
+      } else {
+        setUser(session?.user ?? null);
+      }
     });
 
     return () => subscription.unsubscribe();
