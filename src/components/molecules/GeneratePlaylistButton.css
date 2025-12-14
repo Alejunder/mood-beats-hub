@@ -1,0 +1,101 @@
+/* 🎵 Estilos para el botón de generación de playlist */
+
+.generate-playlist-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.generate-playlist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+}
+
+.generate-playlist-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+  background: linear-gradient(135deg, #1ed760 0%, #1db954 100%);
+}
+
+.generate-playlist-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(29, 185, 84, 0.3);
+}
+
+.generate-playlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generate-playlist-btn .emoji {
+  font-size: 1.5rem;
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: rgba(255, 59, 48, 0.1);
+  border-left: 4px solid #ff3b30;
+  border-radius: 8px;
+  color: #ff3b30;
+  font-weight: 500;
+}
+
+.success-message {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.1) 0%, rgba(30, 215, 96, 0.1) 100%);
+  border-left: 4px solid #1db954;
+  border-radius: 12px;
+  animation: slideIn 0.3s ease;
+}
+
+.success-message h3 {
+  margin: 0 0 0.5rem 0;
+  color: #1db954;
+  font-size: 1.2rem;
+}
+
+.success-message p {
+  margin: 0.25rem 0;
+  color: #333;
+}
+
+.spotify-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  background-color: #1db954;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.spotify-link:hover {
+  background-color: #1ed760;
+  transform: scale(1.05);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
