@@ -14,11 +14,12 @@ export function LoginTemplate() {
       setLoading(true);
       setError(null);
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
         options: {
           redirectTo: `${window.location.origin}/`,
           scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
+          skipBrowserRedirect: false,
           queryParams: {
             prompt: 'select_account',
           },

@@ -9,7 +9,10 @@ export const supabase = createClient(
             autoRefreshToken: true,
             persistSession: true,
             detectSessionInUrl: true,
-            flowType: 'pkce'
+            flowType: 'pkce',
+            // Importante para iOS: asegurar que se detecte el hash fragment
+            storageKey: 'supabase.auth.token',
+            debug: true // Temporal para ver logs en iOS
         }
     }
 )

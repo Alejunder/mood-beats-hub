@@ -66,22 +66,41 @@ function App() {
 
 
   useEffect(() => {
-    // Verificar sesión actual y manejar OAuth redirect
+    // Verificar sesión actual y manejar OAuth redirect con reintentos para iOS
     const initializeAuth = async () => {
-      try {
-        // Intentar obtener sesión de la URL (importante para iOS)
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error obteniendo sesión:', error);
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      while (attempts < maxAttempts) {
+        try {
+          // Pequeño delay para iOS Safari
+          if (attempts > 0) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+          
+          const { data: { session }, error } = await supabase.auth.getSession();
+          
+          if (session) {
+            console.log('✅ Sesión encontrada en intento:', attempts + 1);
+            setUser(session.user);
+            setLoading(false);
+            return;
+          }
+          
+          if (error) {
+            console.error('Error obteniendo sesión:', error);
+          }
+          
+          attempts++;
+        } catch (error) {
+          console.error('Error en inicialización de auth:', error);
+          attempts++;
         }
-        
-        setUser(session?.user ?? null);
-      } catch (error) {
-        console.error('Error en inicialización de auth:', error);
-      } finally {
-        setLoading(false);
       }
+      
+      // Si no hay sesión después de los intentos
+      setUser(null);
+      setLoading(false);
     };
 
     initializeAuth();
@@ -90,11 +109,15 @@ function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change:', event);
+      console.log('🔔 Auth state change:', event, session ? '✅ Con sesión' : '❌ Sin sesión');
       
-      // Manejar específicamente el evento SIGNED_IN para iOS
       if (event === 'SIGNED_IN' && session) {
+        console.log('✅ Usuario autenticado:', session.user.email);
         setUser(session.user);
+        setLoading(false);
+      } else if (event === 'SIGNED_OUT') {
+        console.log('❌ Usuario desconectado');
+        setUser(null);
       } else {
         setUser(session?.user ?? null);
       }
