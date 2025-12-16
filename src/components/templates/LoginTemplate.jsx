@@ -37,20 +37,14 @@ export function LoginTemplate() {
 
   return (
     <div className="login-container">
-      <div className="logo-container">
-        <img src={logo} alt={t('appName')} className="app-logo" />
-      </div>
       <div className="login-card">
         <div className="login-header">
           <p className="app-subtitle">{t('appSubtitle')}</p>
         </div>
 
         <div className="login-content">
-          <div className="welcome-section">
-            <h2>{t('welcome')}</h2>
-            <p>
-              {t('loginDescription')}
-            </p>
+          <div className="logo-container">
+            <img src={logo} alt={t('appName')} className="app-logo" />
           </div>
 
           {error && <div className="error-message">{error}</div>}
