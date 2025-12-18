@@ -41,11 +41,15 @@ export function LoginTemplate() {
               // Usuario intentó iniciar sesión pero se creó una cuenta nueva
               await supabase.auth.signOut();
               setError(t('noAccountPleaseSignup'));
+              setLoading(false);
+              setLoadingSignup(false);
               localStorage.removeItem('authMode');
             } else if (storedAuthMode === 'signup' && (!isNewUser || userExistsInDB)) {
               // Usuario intentó registrarse pero ya tiene cuenta
               await supabase.auth.signOut();
               setError(t('accountExistsPleaseLogin'));
+              setLoading(false);
+              setLoadingSignup(false);
               localStorage.removeItem('authMode');
             } else {
               // Todo correcto, limpiar el authMode
@@ -54,8 +58,16 @@ export function LoginTemplate() {
           }
         } catch (err) {
           console.error('Error verificando usuario:', err);
+          setLoading(false);
+          setLoadingSignup(false);
           localStorage.removeItem('authMode');
         }
+      }
+      
+      // Si hay un error de autenticación o se cierra sesión, restablecer estados
+      if (event === 'SIGNED_OUT') {
+        setLoading(false);
+        setLoadingSignup(false);
       }
     });
 
