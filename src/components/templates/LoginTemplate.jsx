@@ -11,70 +11,52 @@ export function LoginTemplate() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        try {
-          // Recuperar el modo de autenticación del localStorage
-          const storedAuthMode = localStorage.getItem('authMode');
-          
-          if (storedAuthMode) {
-            const userId = session.user.id;
-            const email = session.user.email;
-            
-            // Verificar en la base de datos si el usuario ya existía
-            const { data: existingUser, error: dbError } = await supabase
-              .from('users')
-              .select('id, created_at')
-              .eq('id_auth_supabase', userId)
-              .single();
-
-            const createdAt = new Date(session.user.created_at);
-            const now = new Date();
-            const timeDiff = now - createdAt;
-            const isNewUser = timeDiff < 30000; // Usuario creado en los últimos 30 segundos
-
-            // Verificar si el usuario existe en nuestra base de datos
-            const userExistsInDB = existingUser && !dbError;
-
-            if (storedAuthMode === 'login' && isNewUser && !userExistsInDB) {
-              // Usuario intentó iniciar sesión pero se creó una cuenta nueva
-              await supabase.auth.signOut();
-              setError(t('noAccountPleaseSignup'));
-              setLoading(false);
-              setLoadingSignup(false);
-              localStorage.removeItem('authMode');
-            } else if (storedAuthMode === 'signup' && (!isNewUser || userExistsInDB)) {
-              // Usuario intentó registrarse pero ya tiene cuenta
-              await supabase.auth.signOut();
-              setError(t('accountExistsPleaseLogin'));
-              setLoading(false);
-              setLoadingSignup(false);
-              localStorage.removeItem('authMode');
-            } else {
-              // Todo correcto, limpiar el authMode
-              localStorage.removeItem('authMode');
-            }
-          }
-        } catch (err) {
-          console.error('Error verificando usuario:', err);
-          setLoading(false);
-          setLoadingSignup(false);
-          localStorage.removeItem('authMode');
-        }
+    // Verificar si hay errores en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlHash = window.location.hash;
+    
+    const errorParam = urlParams.get('error') || (urlHash ? new URLSearchParams(urlHash.substring(1)).get('error') : null);
+    const errorDescription = urlParams.get('error_description') || (urlHash ? new URLSearchParams(urlHash.substring(1)).get('error_description') : null);
+    
+    if (errorParam) {
+      // Mostrar el error al usuario
+      if (errorDescription) {
+        const decodedError = decodeURIComponent(errorDescription.replace(/\+/g, ' '));
+        setError(`Error: ${decodedError}`);
+      } else {
+        setError('Error de autenticación. Por favor, intenta de nuevo.');
       }
       
+      // Limpiar la URL sin recargar la página
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Limpiar el authMode del localStorage
+      localStorage.removeItem('authMode');
+      
+      // Asegurarse de cerrar cualquier sesión
+      supabase.auth.signOut();
+    }
+  }, []);
+
+  useEffect(() => {
+    // Escuchar cambios de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       // Si hay un error de autenticación o se cierra sesión, restablecer estados
       if (event === 'SIGNED_OUT') {
         setLoading(false);
         setLoadingSignup(false);
+      }
+      
+      // Si se inicia sesión exitosamente, limpiar el authMode
+      if (event === 'SIGNED_IN' && session) {
+        localStorage.removeItem('authMode');
       }
     });
 
     return () => {
       subscription?.unsubscribe();
     };
-  }, [t]);
+  }, []);
 
   const handleSpotifyLogin = async () => {
     try {
