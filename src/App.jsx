@@ -132,26 +132,18 @@ function App() {
             // Validar conflictos
             if (authMode === 'signup' && !isNewUser) {
               console.warn('⚠️ Intento de registro con cuenta existente');
-              // Primero actualizar el estado de carga
               setLoading(false);
-              // Guardar error y limpiar modo
               localStorage.setItem('authError', 'accountExistsPleaseLogin');
               localStorage.removeItem('authMode');
-              // Cerrar sesión y redirigir
               await supabase.auth.signOut();
-              // Forzar recarga para asegurar limpieza completa
               window.location.replace('/login');
               return;
             } else if (authMode === 'login' && isNewUser) {
               console.warn('⚠️ Intento de login con cuenta nueva');
-              // Primero actualizar el estado de carga
               setLoading(false);
-              // Guardar error y limpiar modo
               localStorage.setItem('authError', 'noAccountPleaseSignup');
               localStorage.removeItem('authMode');
-              // Cerrar sesión y redirigir
               await supabase.auth.signOut();
-              // Forzar recarga para asegurar limpieza completa
               window.location.replace('/login');
               return;
             }
