@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "./supabase/supabase.config";
 import { useSpotifyTokens } from "./hooks/useSpotifyTokens";
+import { validateCurrentUserIntent } from "./services/authIntentService";
+import { validateAuthIntentSimple } from "./services/authIntentServiceSimple";
 import { LanguageProvider } from "./context/LanguageContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import { Sidebar } from "./components/organisms/Sidebar";
@@ -11,6 +13,9 @@ import { SessionExpiredModal } from "./components/molecules/SessionExpiredModal"
 import { SpotifyPlayer } from "./components/molecules/SpotifyPlayer";
 import "./globals.css";
 import "./components/molecules/SweetAlertStyles.css";
+
+// Flag para controlar el método de validación
+const USE_BACKEND_VALIDATION = false; // true = backend RPC, false = validación simple frontend
 
 function App() {
   const [user, setUser] = useState(null);
@@ -114,45 +119,83 @@ function App() {
       if (event === 'SIGNED_IN' && session) {
         console.log('✅ Usuario autenticado:', session.user.email);
         
-        // Verificar el modo de autenticación (login/signup)
+        // Verificar el modo de autenticación (login/signup) y validar con el backend
         const authMode = localStorage.getItem('authMode');
+        const authTimestamp = localStorage.getItem('authTimestamp');
         
-        if (authMode) {
-          console.log('🔍 Validando modo:', authMode);
+        if (authMode && authTimestamp) {
+          console.log('🔍 Validando intent con backend:', authMode);
           
           try {
-            // Verificar si es usuario nuevo o existente
-            const userCreatedAt = new Date(session.user.created_at);
-            const now = new Date();
-            const timeDiff = now - userCreatedAt;
-            const isNewUser = timeDiff < 10000; // Usuario creado hace menos de 10 segundos
-            
-            console.log(`📊 Usuario creado hace ${Math.round(timeDiff / 1000)}s, isNewUser:`, isNewUser);
-            
-            // Validar conflictos
-            if (authMode === 'signup' && !isNewUser) {
-              console.warn('⚠️ Intento de registro con cuenta existente');
-              setLoading(false);
-              localStorage.setItem('authError', 'accountExistsPleaseLogin');
+            let validation;
+
+            if (USE_BACKEND_VALIDATION) {
+              // Validación con backend (RPC)
+              console.log('📡 Usando validación con backend RPC');
+              await new Promise(resolve => setTimeout(resolve, 500));
+              validation = await validateCurrentUserIntent(
+                authMode,
+                parseInt(authTimestamp)
+              );
+            } else {
+              // Validación simple solo en frontend
+              console.log('💻 Usando validación simple en frontend');
+              validation = validateAuthIntentSimple(
+                authMode,
+                parseInt(authTimestamp),
+                session.user.created_at
+              );
+            }
+
+            console.log('📊 Resultado de validación:', validation);
+
+            // Si hubo fallback (error en validación), permitir continuar
+            if (validation.fallback) {
+              console.warn('⚠️ Validación falló, pero permitiendo acceso por seguridad');
               localStorage.removeItem('authMode');
-              await supabase.auth.signOut();
-              window.location.replace('/login');
-              return;
-            } else if (authMode === 'login' && isNewUser) {
-              console.warn('⚠️ Intento de login con cuenta nueva');
+              localStorage.removeItem('authTimestamp');
+              setUser(session.user);
               setLoading(false);
-              localStorage.setItem('authError', 'noAccountPleaseSignup');
-              localStorage.removeItem('authMode');
-              await supabase.auth.signOut();
-              window.location.replace('/login');
               return;
             }
+
+            if (!validation.valid) {
+              // La validación falló
+              console.error('❌ Validación fallida:', validation.error_code || validation.error);
+              
+              setLoading(false);
+              
+              // Guardar el error para mostrarlo en login
+              if (validation.error) {
+                localStorage.setItem('authError', validation.error);
+              }
+              
+              // Limpiar auth state
+              localStorage.removeItem('authMode');
+              localStorage.removeItem('authTimestamp');
+              
+              // Si el backend indica logout, cerrar sesión
+              if (validation.should_logout) {
+                await supabase.auth.signOut();
+                window.location.replace('/login');
+              }
+              
+              return;
+            }
+
+            // Validación exitosa
+            console.log('✅ Validación exitosa:', {
+              email: validation.user_email,
+              isNew: validation.is_new_user
+            });
             
-            // Si todo está bien, limpiar el modo
             localStorage.removeItem('authMode');
+            localStorage.removeItem('authTimestamp');
           } catch (error) {
-            console.error('Error en validación de auth:', error);
+            console.error('💥 Error en validación:', error);
+            // En caso de error, permitir continuar pero limpiar
             localStorage.removeItem('authMode');
+            localStorage.removeItem('authTimestamp');
           }
         }
         

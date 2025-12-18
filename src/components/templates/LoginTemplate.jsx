@@ -71,17 +71,25 @@ export function LoginTemplate() {
       setLoading(true);
       setError(null);
       
-      // Guardar el modo en localStorage antes de la redirección
+      // Guardar el modo y timestamp en localStorage antes de la redirección
       localStorage.setItem('authMode', 'login');
+      localStorage.setItem('authTimestamp', Date.now().toString());
+
+      // Detectar entorno: si estamos en localhost, usar localhost
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const redirectUrl = isDev ? window.location.origin : 'https://mood-beats-six.vercel.app';
+      
+      console.log('🔗 Redirect URL:', redirectUrl, '(isDev:', isDev, ')');
 
       const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${redirectUrl}/`,
           scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
           skipBrowserRedirect: false,
           queryParams: {
             prompt: 'login',
+            show_dialog: 'false', // No forzar diálogo para login
           },
         },
       });
@@ -91,6 +99,7 @@ export function LoginTemplate() {
       console.error(t('loginError'), error);
       setError(t('errorConnectingSpotify'));
       localStorage.removeItem('authMode');
+      localStorage.removeItem('authTimestamp');
     } finally {
       setLoading(false);
     }
@@ -101,17 +110,24 @@ export function LoginTemplate() {
       setLoadingSignup(true);
       setError(null);
       
-      // Guardar el modo en localStorage antes de la redirección
+      // Guardar el modo y timestamp en localStorage antes de la redirección
       localStorage.setItem('authMode', 'signup');
+      localStorage.setItem('authTimestamp', Date.now().toString());
+
+      // Detectar entorno: si estamos en localhost, usar localhost
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const redirectUrl = isDev ? window.location.origin : 'https://mood-beats-six.vercel.app';
+      
+      console.log('🔗 Redirect URL:', redirectUrl, '(isDev:', isDev, ')');
 
       const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${redirectUrl}/`,
           scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
           skipBrowserRedirect: false,
           queryParams: {
-            prompt: 'select_account',
+            show_dialog: 'true', // Forzar selección de cuenta para signup
           },
         },
       });
@@ -121,6 +137,7 @@ export function LoginTemplate() {
       console.error(t('signupError'), error);
       setError(t('errorConnectingSpotify'));
       localStorage.removeItem('authMode');
+      localStorage.removeItem('authTimestamp');
     } finally {
       setLoadingSignup(false);
     }
