@@ -158,8 +158,8 @@ export const es = {
   signupError: 'Error al registrarse',
   errorConnectingSpotify: 'Error al conectar con Spotify. Por favor, intenta de nuevo.',
   loginError: 'Error al iniciar sesión',
-  noAccountPleaseSignup: 'No tienes una cuenta. Por favor, usa el botón de "Registrarse con Spotify"',
-  accountExistsPleaseLogin: 'Ya tienes una cuenta. Por favor, usa el botón de "Iniciar sesión"',
+  noAccountPleaseSignup: 'No tienes una cuenta. Por favor, regístrate primero.',
+  accountExistsPleaseLogin: 'Ya tienes una cuenta. Por favor, inicia sesión.',
 
   // === MOOD STATS ===
   emotionStats: 'Estadísticas de tus Emociones',

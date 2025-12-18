@@ -11,6 +11,14 @@ export function LoginTemplate() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Verificar si hay errores de validación de auth
+    const authError = localStorage.getItem('authError');
+    if (authError) {
+      // authError es la key de traducción (ej: 'accountExistsPleaseLogin')
+      setError(t(authError));
+      localStorage.removeItem('authError');
+    }
+    
     // Verificar si hay errores en la URL
     const urlParams = new URLSearchParams(window.location.search);
     const urlHash = window.location.hash;
@@ -36,7 +44,7 @@ export function LoginTemplate() {
       // Asegurarse de cerrar cualquier sesión
       supabase.auth.signOut();
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     // Escuchar cambios de autenticación
@@ -66,7 +74,7 @@ export function LoginTemplate() {
       // Guardar el modo en localStorage antes de la redirección
       localStorage.setItem('authMode', 'login');
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
         options: {
           redirectTo: `${window.location.origin}/`,
@@ -96,7 +104,7 @@ export function LoginTemplate() {
       // Guardar el modo en localStorage antes de la redirección
       localStorage.setItem('authMode', 'signup');
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data: _data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
         options: {
           redirectTo: `${window.location.origin}/`,

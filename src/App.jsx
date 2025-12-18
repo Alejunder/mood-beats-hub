@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "./supabase/supabase.config";
 import { useSpotifyTokens } from "./hooks/useSpotifyTokens";
@@ -32,9 +32,9 @@ function App() {
   } = useSpotifyTokens();
 
   // Manejar cierre del modal de sesión expirada
-  const handleSessionExpiredClose = () => {
+  const handleSessionExpiredClose = useCallback(() => {
     clearSession();
-  };
+  }, [clearSession]);
 
   // Funciones para controlar el reproductor global
   const handlePlayPlaylist = (playlist) => {
@@ -113,6 +113,57 @@ function App() {
       
       if (event === 'SIGNED_IN' && session) {
         console.log('✅ Usuario autenticado:', session.user.email);
+        
+        // Verificar el modo de autenticación (login/signup)
+        const authMode = localStorage.getItem('authMode');
+        
+        if (authMode) {
+          console.log('🔍 Validando modo:', authMode);
+          
+          try {
+            // Verificar si es usuario nuevo o existente
+            const userCreatedAt = new Date(session.user.created_at);
+            const now = new Date();
+            const timeDiff = now - userCreatedAt;
+            const isNewUser = timeDiff < 10000; // Usuario creado hace menos de 10 segundos
+            
+            console.log(`📊 Usuario creado hace ${Math.round(timeDiff / 1000)}s, isNewUser:`, isNewUser);
+            
+            // Validar conflictos
+            if (authMode === 'signup' && !isNewUser) {
+              console.warn('⚠️ Intento de registro con cuenta existente');
+              // Primero actualizar el estado de carga
+              setLoading(false);
+              // Guardar error y limpiar modo
+              localStorage.setItem('authError', 'accountExistsPleaseLogin');
+              localStorage.removeItem('authMode');
+              // Cerrar sesión y redirigir
+              await supabase.auth.signOut();
+              // Forzar recarga para asegurar limpieza completa
+              window.location.replace('/login');
+              return;
+            } else if (authMode === 'login' && isNewUser) {
+              console.warn('⚠️ Intento de login con cuenta nueva');
+              // Primero actualizar el estado de carga
+              setLoading(false);
+              // Guardar error y limpiar modo
+              localStorage.setItem('authError', 'noAccountPleaseSignup');
+              localStorage.removeItem('authMode');
+              // Cerrar sesión y redirigir
+              await supabase.auth.signOut();
+              // Forzar recarga para asegurar limpieza completa
+              window.location.replace('/login');
+              return;
+            }
+            
+            // Si todo está bien, limpiar el modo
+            localStorage.removeItem('authMode');
+          } catch (error) {
+            console.error('Error en validación de auth:', error);
+            localStorage.removeItem('authMode');
+          }
+        }
+        
         setUser(session.user);
         setLoading(false);
       } else if (event === 'SIGNED_OUT') {
@@ -159,7 +210,7 @@ function App() {
       window.removeEventListener('spotify:token:expired', handleTokenExpired);
       window.removeEventListener('spotify:auth:failed', handleAuthFailed);
     };
-  }, [refreshToken]);
+  }, [refreshToken, handleSessionExpiredClose]);
 
   if (loading) {
     return (

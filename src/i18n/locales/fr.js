@@ -129,6 +129,8 @@ export const fr = {
   signupError: 'Erreur d\'inscription',
   errorConnectingSpotify: 'Erreur de connexion à Spotify. Veuillez réessayer.',
   loginError: 'Erreur de connexion',
+  noAccountPleaseSignup: 'Vous n\'avez pas de compte. Veuillez vous inscrire d\'abord.',
+  accountExistsPleaseLogin: 'Vous avez déjà un compte. Veuillez vous connecter.',
   noAccountPleaseSignup: 'Vous n\'avez pas de compte. Veuillez utiliser le bouton "S\'inscrire avec Spotify"',
   accountExistsPleaseLogin: 'Vous avez déjà un compte. Veuillez utiliser le bouton "Se connecter"',
   

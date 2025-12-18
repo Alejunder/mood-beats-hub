@@ -129,8 +129,8 @@ export const pt = {
   signupError: 'Erro ao cadastrar',
   errorConnectingSpotify: 'Erro ao conectar com Spotify. Por favor, tente novamente.',
   loginError: 'Erro no login',
-  noAccountPleaseSignup: 'Você não tem uma conta. Por favor, use o botão "Cadastrar com Spotify"',
-  accountExistsPleaseLogin: 'Você já tem uma conta. Por favor, use o botão "Entrar"',
+  noAccountPleaseSignup: 'Você não tem uma conta. Por favor, cadastre-se primeiro.',
+  accountExistsPleaseLogin: 'Você já tem uma conta. Por favor, faça login.',
   
   // Mood Stats
   emotionStats: 'Estatísticas das Suas Emoções',

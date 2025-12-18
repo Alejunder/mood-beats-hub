@@ -157,6 +157,8 @@ export const en = {
   signupError: 'Signup error',
   errorConnectingSpotify: 'Error connecting to Spotify. Please try again.',
   loginError: 'Login error',
+  noAccountPleaseSignup: 'You don\'t have an account. Please sign up first.',
+  accountExistsPleaseLogin: 'You already have an account. Please log in.',
   noAccountPleaseSignup: 'You don\'t have an account. Please use the "Sign up with Spotify" button',
   accountExistsPleaseLogin: 'You already have an account. Please use the "Sign in" button',
   
