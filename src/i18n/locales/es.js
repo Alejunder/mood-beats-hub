@@ -151,10 +151,15 @@ export const es = {
   appSubtitle: 'Música que entiende tu estado de ánimo',
   welcome: 'Bienvenido',
   loginDescription: 'Conecta tu cuenta de Spotify para descubrir música personalizada según tu estado de ánimo',
-  loginWithSpotify: 'Iniciar sesión con Spotify',
+  loginWithSpotify: 'Iniciar sesión',
+  signupWithSpotify: 'Registrarse con Spotify',
+  or: 'o',
   termsAndConditions: 'Al iniciar sesión, aceptas nuestros términos y condiciones',
+  signupError: 'Error al registrarse',
   errorConnectingSpotify: 'Error al conectar con Spotify. Por favor, intenta de nuevo.',
   loginError: 'Error al iniciar sesión',
+  noAccountPleaseSignup: 'No tienes una cuenta. Por favor, usa el botón de "Registrarse con Spotify"',
+  accountExistsPleaseLogin: 'Ya tienes una cuenta. Por favor, usa el botón de "Iniciar sesión"',
 
   // === MOOD STATS ===
   emotionStats: 'Estadísticas de tus Emociones',

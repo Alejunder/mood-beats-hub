@@ -167,6 +167,75 @@
   cursor: not-allowed;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(213, 185, 178, 0.2);
+}
+
+.divider span {
+  color: #d5b9b2;
+  font-size: 14px;
+  padding: 0 16px;
+  opacity: 0.7;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.spotify-signup-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  border: 1px solid rgba(89, 112, 129, 0.2);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    5px 5px 15px rgba(0, 0, 0, 0.5),
+    8px 8px 24px rgba(0, 0, 0, 0.4),
+    -2px -2px 8px rgba(40, 40, 40, 0.08),
+    -4px -4px 14px rgba(40, 40, 40, 0.05);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.spotify-signup-button:hover:not(:disabled) {
+  background: linear-gradient(145deg, #252525, #1a1a1a);
+  border-color: rgba(89, 112, 129, 0.3);
+  box-shadow: 
+    4px 4px 12px rgba(0, 0, 0, 0.55),
+    7px 7px 20px rgba(0, 0, 0, 0.45),
+    -2px -2px 8px rgba(50, 50, 50, 0.1),
+    -4px -4px 14px rgba(50, 50, 50, 0.07);
+}
+
+.spotify-signup-button:active:not(:disabled) {
+  background: linear-gradient(145deg, #0f0f0f, #0a0a0a);
+  box-shadow: 
+    inset 3px 3px 10px rgba(0, 0, 0, 0.6),
+    inset 5px 5px 16px rgba(0, 0, 0, 0.5),
+    -1px -1px 5px rgba(30, 30, 30, 0.08);
+}
+
+.spotify-signup-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .spotify-icon {
   width: 24px;
   height: 24px;

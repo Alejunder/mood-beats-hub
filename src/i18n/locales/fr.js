@@ -122,10 +122,15 @@ export const fr = {
   appSubtitle: 'Musique qui comprend votre humeur',
   welcome: 'Bienvenue',
   loginDescription: 'Connectez votre compte Spotify pour découvrir de la musique personnalisée basée sur votre humeur',
-  loginWithSpotify: 'Se connecter avec Spotify',
+  loginWithSpotify: 'Se connecter',
+  signupWithSpotify: 'S\'inscrire avec Spotify',
+  or: 'ou',
   termsAndConditions: 'En vous connectant, vous acceptez nos conditions générales',
+  signupError: 'Erreur d\'inscription',
   errorConnectingSpotify: 'Erreur de connexion à Spotify. Veuillez réessayer.',
   loginError: 'Erreur de connexion',
+  noAccountPleaseSignup: 'Vous n\'avez pas de compte. Veuillez utiliser le bouton "S\'inscrire avec Spotify"',
+  accountExistsPleaseLogin: 'Vous avez déjà un compte. Veuillez utiliser le bouton "Se connecter"',
   
   // Mood Stats
   emotionStats: 'Statistiques de Vos Émotions',

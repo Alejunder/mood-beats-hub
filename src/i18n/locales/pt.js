@@ -122,10 +122,15 @@ export const pt = {
   appSubtitle: 'Música que entende seu humor',
   welcome: 'Bem-vindo',
   loginDescription: 'Conecte sua conta Spotify para descobrir música personalizada baseada no seu humor',
-  loginWithSpotify: 'Entrar com Spotify',
+  loginWithSpotify: 'Entrar',
+  signupWithSpotify: 'Cadastrar com Spotify',
+  or: 'ou',
   termsAndConditions: 'Ao entrar, você aceita nossos termos e condições',
+  signupError: 'Erro ao cadastrar',
   errorConnectingSpotify: 'Erro ao conectar com Spotify. Por favor, tente novamente.',
   loginError: 'Erro no login',
+  noAccountPleaseSignup: 'Você não tem uma conta. Por favor, use o botão "Cadastrar com Spotify"',
+  accountExistsPleaseLogin: 'Você já tem uma conta. Por favor, use o botão "Entrar"',
   
   // Mood Stats
   emotionStats: 'Estatísticas das Suas Emoções',

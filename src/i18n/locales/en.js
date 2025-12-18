@@ -150,10 +150,15 @@ export const en = {
   appSubtitle: 'Music that understands your mood',
   welcome: 'Welcome',
   loginDescription: 'Connect your Spotify account to discover personalized music based on your mood',
-  loginWithSpotify: 'Sign in with Spotify',
+  loginWithSpotify: 'Sign in',
+  signupWithSpotify: 'Sign up with Spotify',
+  or: 'or',
   termsAndConditions: 'By signing in, you accept our terms and conditions',
+  signupError: 'Signup error',
   errorConnectingSpotify: 'Error connecting to Spotify. Please try again.',
   loginError: 'Login error',
+  noAccountPleaseSignup: 'You don\'t have an account. Please use the "Sign up with Spotify" button',
+  accountExistsPleaseLogin: 'You already have an account. Please use the "Sign in" button',
   
   // Mood Stats
   emotionStats: 'Your Emotion Statistics',

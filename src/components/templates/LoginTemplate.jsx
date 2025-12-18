@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabase/supabase.config";
 import { useLanguage } from "../../context/LanguageContext";
 import logo from "../../assets/moodlogo.png";
@@ -7,12 +7,76 @@ import "./styles/LoginTemplate.css";
 export function LoginTemplate() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
+  const [loadingSignup, setLoadingSignup] = useState(false);
   const [error, setError] = useState(null);
+  const [authMode, setAuthMode] = useState(null); // 'login' or 'signup'
+
+  useEffect(() => {
+    // Escuchar cambios de autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session && authMode) {
+        try {
+          const userId = session.user.id;
+          const createdAt = new Date(session.user.created_at);
+          const now = new Date();
+          const timeDiff = now - createdAt;
+          const isNewUser = timeDiff < 10000; // Usuario creado en los últimos 10 segundos
+
+          if (authMode === 'login' && isNewUser) {
+            // Usuario intentó iniciar sesión pero se creó una cuenta nueva
+            await supabase.auth.signOut();
+            setError(t('noAccountPleaseSignup'));
+            setAuthMode(null);
+          } else if (authMode === 'signup' && !isNewUser) {
+            // Usuario intentó registrarse pero ya tiene cuenta
+            await supabase.auth.signOut();
+            setError(t('accountExistsPleaseLogin'));
+            setAuthMode(null);
+          }
+        } catch (err) {
+          console.error('Error verificando usuario:', err);
+        }
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [authMode, t]);
 
   const handleSpotifyLogin = async () => {
     try {
       setLoading(true);
       setError(null);
+      setAuthMode('login');
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "spotify",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
+          skipBrowserRedirect: false,
+          queryParams: {
+            prompt: 'login',
+          },
+        },
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error(t('loginError'), error);
+      setError(t('errorConnectingSpotify'));
+      setAuthMode(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSpotifySignup = async () => {
+    try {
+      setLoadingSignup(true);
+      setError(null);
+      setAuthMode('signup');
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
@@ -28,10 +92,11 @@ export function LoginTemplate() {
 
       if (error) throw error;
     } catch (error) {
-      console.error(t('loginError'), error);
+      console.error(t('signupError'), error);
       setError(t('errorConnectingSpotify'));
+      setAuthMode(null);
     } finally {
-      setLoading(false);
+      setLoadingSignup(false);
     }
   };
 
@@ -52,9 +117,27 @@ export function LoginTemplate() {
           <button
             className="spotify-login-button"
             onClick={handleSpotifyLogin}
-            disabled={loading}
+            disabled={loading || loadingSignup}
           >
             {loading ? (
+              <span className="loading-spinner"></span>
+            ) : (
+              <>
+                {t('loginWithSpotify')}
+              </>
+            )}
+          </button>
+
+          <div className="divider">
+            <span>{t('or')}</span>
+          </div>
+
+          <button
+            className="spotify-signup-button"
+            onClick={handleSpotifySignup}
+            disabled={loading || loadingSignup}
+          >
+            {loadingSignup ? (
               <span className="loading-spinner"></span>
             ) : (
               <>
@@ -65,7 +148,7 @@ export function LoginTemplate() {
                 >
                   <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
                 </svg>
-                {t('loginWithSpotify')}
+                {t('signupWithSpotify')}
               </>
             )}
           </button>
