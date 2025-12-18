@@ -9,32 +9,52 @@ export function LoginTemplate() {
   const [loading, setLoading] = useState(false);
   const [loadingSignup, setLoadingSignup] = useState(false);
   const [error, setError] = useState(null);
-  const [authMode, setAuthMode] = useState(null); // 'login' or 'signup'
 
   useEffect(() => {
     // Escuchar cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session && authMode) {
+      if (event === 'SIGNED_IN' && session) {
         try {
-          const userId = session.user.id;
-          const createdAt = new Date(session.user.created_at);
-          const now = new Date();
-          const timeDiff = now - createdAt;
-          const isNewUser = timeDiff < 10000; // Usuario creado en los últimos 10 segundos
+          // Recuperar el modo de autenticación del localStorage
+          const storedAuthMode = localStorage.getItem('authMode');
+          
+          if (storedAuthMode) {
+            const userId = session.user.id;
+            const email = session.user.email;
+            
+            // Verificar en la base de datos si el usuario ya existía
+            const { data: existingUser, error: dbError } = await supabase
+              .from('users')
+              .select('id, created_at')
+              .eq('id_auth_supabase', userId)
+              .single();
 
-          if (authMode === 'login' && isNewUser) {
-            // Usuario intentó iniciar sesión pero se creó una cuenta nueva
-            await supabase.auth.signOut();
-            setError(t('noAccountPleaseSignup'));
-            setAuthMode(null);
-          } else if (authMode === 'signup' && !isNewUser) {
-            // Usuario intentó registrarse pero ya tiene cuenta
-            await supabase.auth.signOut();
-            setError(t('accountExistsPleaseLogin'));
-            setAuthMode(null);
+            const createdAt = new Date(session.user.created_at);
+            const now = new Date();
+            const timeDiff = now - createdAt;
+            const isNewUser = timeDiff < 30000; // Usuario creado en los últimos 30 segundos
+
+            // Verificar si el usuario existe en nuestra base de datos
+            const userExistsInDB = existingUser && !dbError;
+
+            if (storedAuthMode === 'login' && isNewUser && !userExistsInDB) {
+              // Usuario intentó iniciar sesión pero se creó una cuenta nueva
+              await supabase.auth.signOut();
+              setError(t('noAccountPleaseSignup'));
+              localStorage.removeItem('authMode');
+            } else if (storedAuthMode === 'signup' && (!isNewUser || userExistsInDB)) {
+              // Usuario intentó registrarse pero ya tiene cuenta
+              await supabase.auth.signOut();
+              setError(t('accountExistsPleaseLogin'));
+              localStorage.removeItem('authMode');
+            } else {
+              // Todo correcto, limpiar el authMode
+              localStorage.removeItem('authMode');
+            }
           }
         } catch (err) {
           console.error('Error verificando usuario:', err);
+          localStorage.removeItem('authMode');
         }
       }
     });
@@ -42,13 +62,15 @@ export function LoginTemplate() {
     return () => {
       subscription?.unsubscribe();
     };
-  }, [authMode, t]);
+  }, [t]);
 
   const handleSpotifyLogin = async () => {
     try {
       setLoading(true);
       setError(null);
-      setAuthMode('login');
+      
+      // Guardar el modo en localStorage antes de la redirección
+      localStorage.setItem('authMode', 'login');
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
@@ -66,7 +88,7 @@ export function LoginTemplate() {
     } catch (error) {
       console.error(t('loginError'), error);
       setError(t('errorConnectingSpotify'));
-      setAuthMode(null);
+      localStorage.removeItem('authMode');
     } finally {
       setLoading(false);
     }
@@ -76,7 +98,9 @@ export function LoginTemplate() {
     try {
       setLoadingSignup(true);
       setError(null);
-      setAuthMode('signup');
+      
+      // Guardar el modo en localStorage antes de la redirección
+      localStorage.setItem('authMode', 'signup');
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "spotify",
@@ -94,7 +118,7 @@ export function LoginTemplate() {
     } catch (error) {
       console.error(t('signupError'), error);
       setError(t('errorConnectingSpotify'));
-      setAuthMode(null);
+      localStorage.removeItem('authMode');
     } finally {
       setLoadingSignup(false);
     }
