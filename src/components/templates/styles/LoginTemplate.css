@@ -1,0 +1,287 @@
+.login-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #0a0a0a, #000000);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-logo {
+  width: 300px;
+  height: auto;
+  filter: drop-shadow(0 8px 20px rgba(89, 112, 129, 0.4));
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.login-card {
+  position: relative;
+  background: linear-gradient(145deg, #0d0d0d, #000000);
+  border-radius: 35px;
+  box-shadow: 
+    5px 5px 15px rgba(0, 0, 0, 0.5),
+    10px 10px 30px rgba(0, 0, 0, 0.4),
+    20px 20px 60px rgba(0, 0, 0, 0.3),
+    -5px -5px 15px rgba(40, 40, 40, 0.03),
+    -10px -10px 30px rgba(40, 40, 40, 0.02),
+    inset 1px 1px 3px rgba(0, 0, 0, 0.4),
+    inset -1px -1px 3px rgba(40, 40, 40, 0.02);
+  width: 100%;
+  max-width: 480px;
+  padding: 48px 40px;
+  animation: slideUp 0.6s ease-out;
+  border: 1px solid rgba(89, 112, 129, 0.15);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.app-title {
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #597081 0%, #9a031e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  filter: drop-shadow(0 4px 8px rgba(154, 3, 30, 0.5)) 
+          drop-shadow(0 2px 4px rgba(89, 112, 129, 0.3));
+}
+
+.app-subtitle {
+  color: #d5b9b2;
+  font-size: 25px;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8),
+               -1px -1px 2px rgba(40, 40, 40, 0.2);
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.error-message {
+  background: linear-gradient(145deg, rgba(154, 3, 30, 0.15), rgba(154, 3, 30, 0.25));
+  color: #ece2d0;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  border: 1px solid rgba(154, 3, 30, 0.5);
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.4),
+    inset 4px 4px 10px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 6px rgba(154, 3, 30, 0.08),
+    inset -4px -4px 10px rgba(154, 3, 30, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.spotify-login-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(145deg, #0c0c0c, #080808);
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    inset 6px 6px 18px rgba(0, 0, 0, 0.8),
+    inset 10px 10px 28px rgba(0, 0, 0, 0.7),
+    inset 14px 14px 40px rgba(0, 0, 0, 0.6),
+    inset -4px -4px 14px rgba(20, 20, 20, 0.15),
+    inset -8px -8px 22px rgba(20, 20, 20, 0.1),
+    inset -12px -12px 32px rgba(20, 20, 20, 0.05);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+
+
+
+
+.spotify-login-button:hover:not(:disabled) {
+  box-shadow: 
+    inset 5px 5px 16px rgba(0, 0, 0, 0.75),
+    inset 8px 8px 24px rgba(0, 0, 0, 0.65),
+    inset 12px 12px 36px rgba(0, 0, 0, 0.55),
+    inset -4px -4px 14px rgba(30, 30, 30, 0.18),
+    inset -7px -7px 20px rgba(30, 30, 30, 0.12),
+    inset -10px -10px 28px rgba(30, 30, 30, 0.08);
+}
+
+
+.spotify-login-button:active:not(:disabled) {
+  box-shadow: 
+    inset 8px 8px 22px rgba(0, 0, 0, 0.85),
+    inset 12px 12px 32px rgba(0, 0, 0, 0.75),
+    inset 16px 16px 44px rgba(0, 0, 0, 0.65),
+    inset -3px -3px 12px rgba(15, 15, 15, 0.15),
+    inset -6px -6px 18px rgba(15, 15, 15, 0.1),
+    inset -9px -9px 26px rgba(15, 15, 15, 0.06);
+}
+
+
+
+.spotify-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(213, 185, 178, 0.2);
+}
+
+.divider span {
+  color: #d5b9b2;
+  font-size: 14px;
+  padding: 0 16px;
+  opacity: 0.7;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.spotify-signup-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  border: 1px solid rgba(89, 112, 129, 0.2);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    5px 5px 15px rgba(0, 0, 0, 0.5),
+    8px 8px 24px rgba(0, 0, 0, 0.4),
+    -2px -2px 8px rgba(40, 40, 40, 0.08),
+    -4px -4px 14px rgba(40, 40, 40, 0.05);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.spotify-signup-button:hover:not(:disabled) {
+  background: linear-gradient(145deg, #252525, #1a1a1a);
+  border-color: rgba(89, 112, 129, 0.3);
+  box-shadow: 
+    4px 4px 12px rgba(0, 0, 0, 0.55),
+    7px 7px 20px rgba(0, 0, 0, 0.45),
+    -2px -2px 8px rgba(50, 50, 50, 0.1),
+    -4px -4px 14px rgba(50, 50, 50, 0.07);
+}
+
+.spotify-signup-button:active:not(:disabled) {
+  background: linear-gradient(145deg, #0f0f0f, #0a0a0a);
+  box-shadow: 
+    inset 3px 3px 10px rgba(0, 0, 0, 0.6),
+    inset 5px 5px 16px rgba(0, 0, 0, 0.5),
+    -1px -1px 5px rgba(30, 30, 30, 0.08);
+}
+
+.spotify-signup-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spotify-icon {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
+  position: relative;
+  z-index: 1;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.terms-text {
+  text-align: center;
+  color: #d5b9b2;
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.7;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .login-card {
+    padding: 32px 24px;
+  }
+
+  .app-title {
+    font-size: 28px;
+  }
+
+  .welcome-section h2 {
+    font-size: 20px;
+  }
+}

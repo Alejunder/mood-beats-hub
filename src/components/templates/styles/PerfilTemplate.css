@@ -1,0 +1,484 @@
+.perfil-container {
+  min-height: 100vh;
+  padding: 2rem 2rem 6rem;
+  padding-left: 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ===== HEADER ===== */
+.perfil-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.perfil-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #ece2d0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.perfil-header p {
+  font-size: 1.1rem;
+  color: #d5b9b2;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== SECCIONES ===== */
+.perfil-section {
+  background: linear-gradient(145deg, #0c0c0c, #080808);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 
+    inset 4px 4px 12px rgba(0, 0, 0, 0.7),
+    inset 6px 6px 18px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 8px rgba(20, 20, 20, 0.1),
+    4px 4px 16px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(89, 112, 129, 0.15);
+  transition: all 0.3s ease;
+}
+
+.perfil-section:hover {
+  box-shadow: 
+    inset 4px 4px 12px rgba(0, 0, 0, 0.7),
+    inset 6px 6px 18px rgba(0, 0, 0, 0.6),
+    inset -2px -2px 8px rgba(20, 20, 20, 0.1),
+    6px 6px 20px rgba(0, 0, 0, 0.9);
+  border-color: rgba(89, 112, 129, 0.25);
+}
+
+.perfil-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #ece2d0;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ===== INFORMACIÓN DEL USUARIO ===== */
+.user-info-section {
+  /* Estilos adicionales específicos para la sección de info */
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: linear-gradient(145deg, #0a0a0a, #050505);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(89, 112, 129, 0.1);
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 4px rgba(20, 20, 20, 0.1);
+  border-color: rgba(154, 3, 30, 0.3);
+  transform: translateY(-2px);
+}
+
+.info-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #0d0d0d, #000000);
+  border-radius: 12px;
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 4px rgba(20, 20, 20, 0.1);
+  color: #d5b9b2;
+  transition: color 0.3s ease;
+}
+
+.info-card:hover .info-icon {
+  color: #9a031e;
+}
+
+.info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #d5b9b2;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.info-value {
+  font-size: 1.1rem;
+  color: #ece2d0;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.info-value.premium {
+  color: #1DB954;
+  text-shadow: 0 0 8px rgba(29, 185, 84, 0.3);
+}
+
+/* ===== ESTADÍSTICAS ===== */
+.stats-section {
+  /* Estilos adicionales específicos para estadísticas */
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: linear-gradient(145deg, #0a0a0a, #050505);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(89, 112, 129, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 4px rgba(20, 20, 20, 0.1),
+    0 0 12px rgba(154, 3, 30, 0.3);
+  border-color: rgba(154, 3, 30, 0.3);
+  transform: translateY(-3px);
+}
+
+.stat-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+  color: #d5b9b2;
+  transition: color 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  color: #9a031e;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ece2d0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: #d5b9b2;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.stat-sublabel {
+  font-size: 0.8rem;
+  color: #597081;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== SPOTIFY STATUS ===== */
+.spotify-section {
+  /* Estilos adicionales específicos para Spotify */
+}
+
+.spotify-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(145deg, #0a0a0a, #050505);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(29, 185, 84, 0.2);
+}
+
+.spotify-status-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #888;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.status-indicator.connected {
+  background: #1DB954;
+  box-shadow: 0 0 12px rgba(29, 185, 84, 0.5);
+  animation: perfil-pulse 2s infinite;
+}
+
+@keyframes perfil-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.status-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.status-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ece2d0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.status-subtitle {
+  font-size: 0.9rem;
+  color: #d5b9b2;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.spotify-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(29, 185, 84, 0.2);
+  border: 2px solid rgba(29, 185, 84, 0.3);
+}
+
+/* ===== ZONA DE PELIGRO ===== */
+.danger-section {
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.danger-section:hover {
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+.danger-card {
+  background: linear-gradient(145deg, #0a0a0a, #050505);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(20, 20, 20, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.danger-info {
+  margin-bottom: 1.5rem;
+}
+
+.danger-info h3 {
+  font-size: 1.3rem;
+  color: #ece2d0;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.danger-info p {
+  color: #d5b9b2;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.danger-note {
+  color: #ef4444 !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.delete-account-btn {
+  width: 100%;
+  background: linear-gradient(145deg, #dc2626, #b91c1c);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(255, 255, 255, 0.02);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.delete-account-btn:hover:not(:disabled) {
+  background: linear-gradient(145deg, #b91c1c, #991b1b);
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.02),
+    0 0 16px rgba(220, 38, 38, 0.5);
+  transform: translateY(-2px);
+}
+
+.delete-account-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    inset 4px 4px 10px rgba(0, 0, 0, 0.7),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.02);
+}
+
+.delete-account-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-icon,
+.btn-spinner {
+  font-size: 1.2rem;
+}
+
+/* ===== ACCIONES RÁPIDAS ===== */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.action-btn {
+  background: linear-gradient(145deg, #0d0d0d, #000000);
+  border: 1px solid rgba(89, 112, 129, 0.2);
+  color: #d5b9b2;
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    -2px -2px 6px rgba(20, 20, 20, 0.1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.action-btn span {
+  font-size: 1.2rem;
+}
+
+.action-btn:hover {
+  background: linear-gradient(145deg, #0a0a0a, #050505);
+  color: #ece2d0;
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 4px rgba(20, 20, 20, 0.1),
+    0 0 12px rgba(154, 3, 30, 0.4);
+  border-color: rgba(154, 3, 30, 0.5);
+  transform: translateY(-2px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: 
+    inset 4px 4px 10px rgba(0, 0, 0, 0.7),
+    inset -2px -2px 6px rgba(20, 20, 20, 0.1);
+}
+
+.action-btn.primary {
+  border-color: rgba(154, 3, 30, 0.3);
+}
+
+.action-btn.secondary {
+  border-color: rgba(89, 112, 129, 0.3);
+}
+
+.action-btn.tertiary {
+  border-color: rgba(213, 185, 178, 0.2);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .perfil-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .perfil-header h1 {
+    font-size: 2rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .spotify-status-card {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+}

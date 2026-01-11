@@ -1,0 +1,1242 @@
+/* ============================================
+   ESTILOS GLOBALES - SWEETALERT2
+   ============================================ */
+
+/* Asegurar que los modales de SweetAlert2 aparezcan por encima de otros modales */
+.swal2-container {
+  z-index: 20000 !important;
+}
+
+/* Overlay de SweetAlert2 */
+.swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(4px);
+}
+
+
+/* ============================================
+   ALERT MODAL - Alertas generales (Error, Warning, Success, Info)
+   ============================================ */
+
+/* ERROR ALERT - Neumorfismo Extremo */
+.error-alert-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.error-alert-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.error-alert-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.error-alert-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #b30422, #9a031e) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(179, 4, 34, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.error-alert-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(179, 4, 34, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #d4052a, #b30422) !important;
+}
+
+.error-alert-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(179, 4, 34, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #8a0219, #9a031e) !important;
+}
+
+.error-alert-modal .swal2-icon.swal2-error {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.error-alert-modal .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+  background-color: #9a031e !important;
+}
+
+/* WARNING ALERT - Neumorfismo Extremo */
+.warning-alert-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.warning-alert-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.warning-alert-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.warning-alert-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.warning-alert-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.warning-alert-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.warning-alert-modal .swal2-icon.swal2-warning {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.warning-alert-modal .swal2-icon.swal2-warning .swal2-icon-content {
+  color: #597081 !important;
+  text-shadow: 
+    0 0 10px rgba(89, 112, 129, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* SUCCESS ALERT - Neumorfismo Extremo */
+.success-alert-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.success-alert-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.success-alert-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.success-alert-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.success-alert-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.success-alert-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.success-alert-modal .swal2-icon.swal2-success {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.success-alert-modal .swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #597081 !important;
+}
+
+.success-alert-modal .swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(89, 112, 129, 0.3) !important;
+}
+
+/* INFO ALERT - Neumorfismo Extremo */
+.info-alert-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.info-alert-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.info-alert-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.info-alert-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.info-alert-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.info-alert-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.info-alert-modal .swal2-icon.swal2-info {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.info-alert-modal .swal2-icon.swal2-info .swal2-icon-content {
+  color: #597081 !important;
+  text-shadow: 
+    0 0 10px rgba(89, 112, 129, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ============================================
+   CONFIRM DELETE PLAYLIST MODAL - NEUMORFISMO EXTREMO
+   ============================================ */
+
+/* Modal principal con efecto neumórfico ultra-pronunciado */
+.playlist-delete-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  /* Sombras neumórficas extremas: luz arriba-izquierda y sombra abajo-derecha */
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Título del modal con relieve neumórfico */
+.playlist-delete-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+/* Contenido del modal con superficie hundida */
+.playlist-delete-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+/* Botón de confirmar (Eliminar) - Neumórfico ultra-elevado */
+.playlist-delete-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #b30422, #9a031e) !important;
+  color: #ece2d0 !important;
+  /* Sombras neumórficas extremas para el botón */
+  box-shadow: 
+    -8px -8px 16px rgba(179, 4, 34, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+/* Hover del botón de confirmar - Elevación extrema */
+.playlist-delete-confirm-btn:hover {
+  transform: translateY(-4px);
+  /* Intensificar sombras en hover para mayor elevación */
+  box-shadow: 
+    -12px -12px 24px rgba(179, 4, 34, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #d4052a, #b30422) !important;
+}
+
+/* Estado activo (presionado) - Hundimiento profundo */
+.playlist-delete-confirm-btn:active {
+  transform: translateY(1px);
+  /* Efecto de hundimiento neumórfico profundo */
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(179, 4, 34, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #8a0219, #9a031e) !important;
+}
+
+/* Botón de cancelar - Neumórfico ultra-elevado */
+.playlist-delete-cancel-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  /* Sombras neumórficas extremas para el botón de cancelar */
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+/* Hover del botón de cancelar - Elevación extrema */
+.playlist-delete-cancel-btn:hover {
+  transform: translateY(-4px);
+  /* Intensificar sombras en hover para mayor elevación */
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+/* Estado activo (presionado) - Hundimiento profundo */
+.playlist-delete-cancel-btn:active {
+  transform: translateY(1px);
+  /* Efecto de hundimiento neumórfico profundo */
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+/* Icono de advertencia con relieve neumórfico */
+.playlist-delete-modal .swal2-icon.swal2-warning {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+/* Línea de borde del icono */
+.playlist-delete-modal .swal2-icon.swal2-warning .swal2-icon-content {
+  color: #9a031e !important;
+  text-shadow: 
+    0 0 10px rgba(154, 3, 30, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ============================================
+   CONFIRM DELETE TRACK MODAL - NEUMORFISMO EXTREMO
+   ============================================ */
+
+/* Modal principal con efecto neumórfico ultra-pronunciado */
+.delete-track-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  /* Sombras neumórficas extremas: luz arriba-izquierda y sombra abajo-derecha */
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Título del modal con relieve neumórfico */
+.delete-track-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+/* Contenido del modal */
+.delete-track-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+/* Botón de confirmar (Eliminar) - Neumórfico ultra-elevado */
+.delete-track-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #b30422, #9a031e) !important;
+  color: #ece2d0 !important;
+  /* Sombras neumórficas extremas para el botón */
+  box-shadow: 
+    -8px -8px 16px rgba(179, 4, 34, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+/* Hover del botón de confirmar - Elevación extrema */
+.delete-track-confirm-btn:hover {
+  transform: translateY(-4px);
+  /* Intensificar sombras en hover para mayor elevación */
+  box-shadow: 
+    -12px -12px 24px rgba(179, 4, 34, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #d4052a, #b30422) !important;
+}
+
+/* Estado activo (presionado) - Hundimiento profundo */
+.delete-track-confirm-btn:active {
+  transform: translateY(1px);
+  /* Efecto de hundimiento neumórfico profundo */
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(179, 4, 34, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #8a0219, #9a031e) !important;
+}
+
+/* Botón de cancelar - Neumórfico ultra-elevado */
+.delete-track-cancel-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  /* Sombras neumórficas extremas para el botón de cancelar */
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+/* Hover del botón de cancelar - Elevación extrema */
+.delete-track-cancel-btn:hover {
+  transform: translateY(-4px);
+  /* Intensificar sombras en hover para mayor elevación */
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+/* Estado activo (presionado) - Hundimiento profundo */
+.delete-track-cancel-btn:active {
+  transform: translateY(1px);
+  /* Efecto de hundimiento neumórfico profundo */
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+/* Icono de advertencia con relieve neumórfico */
+.delete-track-modal .swal2-icon.swal2-warning {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+/* Línea de borde del icono */
+.delete-track-modal .swal2-icon.swal2-warning .swal2-icon-content {
+  color: #9a031e !important;
+  text-shadow: 
+    0 0 10px rgba(154, 3, 30, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ============================================
+   DELETE ACCOUNT MODALS - NEUMORFISMO EXTREMO
+   ============================================ */
+
+/* DELETE ACCOUNT CONFIRMATION MODAL */
+.delete-account-confirm-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.delete-account-confirm-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px 16px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.delete-account-confirm-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.delete-account-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #b30422, #9a031e) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(179, 4, 34, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-account-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(179, 4, 34, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #d4052a, #b30422) !important;
+}
+
+.delete-account-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(179, 4, 34, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #8a0219, #9a031e) !important;
+}
+
+.delete-account-cancel-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-account-cancel-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.delete-account-cancel-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.delete-account-confirm-modal .swal2-icon.swal2-warning {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.delete-account-confirm-modal .swal2-icon.swal2-warning .swal2-icon-content {
+  color: #9a031e !important;
+  text-shadow: 
+    0 0 10px rgba(154, 3, 30, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* DELETE ACCOUNT INPUT MODAL */
+.delete-account-input-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.delete-account-input-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px 16px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.delete-account-input-content {
+  padding: 0 24px 12px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.delete-account-input-field {
+  border-radius: 12px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  color: #ece2d0 !important;
+  padding: 14px 20px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  letter-spacing: 2px !important;
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.8),
+    inset -4px -4px 8px rgba(89, 112, 129, 0.1),
+    inset 0 0 4px rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.3s ease !important;
+}
+
+.delete-account-input-field:focus {
+  outline: none !important;
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.9),
+    inset -6px -6px 12px rgba(89, 112, 129, 0.15),
+    inset 0 0 8px rgba(154, 3, 30, 0.3) !important;
+  border: 1px solid rgba(154, 3, 30, 0.3) !important;
+}
+
+.delete-account-input-field::placeholder {
+  color: rgba(213, 185, 178, 0.4) !important;
+  letter-spacing: 2px;
+}
+
+.delete-account-input-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #b30422, #9a031e) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(179, 4, 34, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-account-input-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(179, 4, 34, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #d4052a, #b30422) !important;
+}
+
+.delete-account-input-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(179, 4, 34, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #8a0219, #9a031e) !important;
+}
+
+.delete-account-input-cancel-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-account-input-cancel-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.delete-account-input-cancel-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.swal2-validation-message {
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  color: #9a031e !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 20px !important;
+  font-weight: 600 !important;
+  box-shadow: 
+    -4px -4px 8px rgba(154, 3, 30, 0.2),
+    4px 4px 8px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* DELETE CANCELLED MODAL */
+.delete-cancelled-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.delete-cancelled-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.delete-cancelled-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.delete-cancelled-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-cancelled-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.delete-cancelled-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.delete-cancelled-modal .swal2-icon.swal2-info {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.delete-cancelled-modal .swal2-icon.swal2-info .swal2-icon-content {
+  color: #597081 !important;
+  text-shadow: 
+    0 0 10px rgba(89, 112, 129, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* DELETE SUCCESS MODAL */
+.delete-success-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.delete-success-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.delete-success-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.delete-success-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #6a8595, #597081) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(106, 133, 149, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-success-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(106, 133, 149, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #7a95a5, #6a8595) !important;
+}
+
+.delete-success-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(106, 133, 149, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #496070, #597081) !important;
+}
+
+.delete-success-modal .swal2-icon.swal2-success {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.delete-success-modal .swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #597081 !important;
+}
+
+.delete-success-modal .swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(89, 112, 129, 0.3) !important;
+}
+
+/* DELETE ERROR MODAL */
+.delete-error-modal {
+  border-radius: 24px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #0a0a0a, #000000) !important;
+  box-shadow: 
+    -20px -20px 40px rgba(89, 112, 129, 0.25),
+    20px 20px 40px rgba(0, 0, 0, 0.95),
+    inset 2px 2px 4px rgba(213, 185, 178, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.delete-error-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  padding: 24px 28px !important;
+  color: #ece2d0 !important;
+  text-align: center !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.6),
+    -1px -1px 2px rgba(236, 226, 208, 0.1);
+}
+
+.delete-error-content {
+  padding: 0 24px 24px 24px !important;
+  color: #d5b9b2 !important;
+}
+
+.delete-error-confirm-btn {
+  border-radius: 16px !important;
+  padding: 14px 32px !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  border: none !important;
+  background: linear-gradient(145deg, #b30422, #9a031e) !important;
+  color: #ece2d0 !important;
+  box-shadow: 
+    -8px -8px 16px rgba(179, 4, 34, 0.5),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-shadow: 
+    1px 1px 3px rgba(0, 0, 0, 0.5),
+    -0.5px -0.5px 1px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.delete-error-confirm-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    -12px -12px 24px rgba(179, 4, 34, 0.6),
+    12px 12px 24px rgba(0, 0, 0, 0.9),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #d4052a, #b30422) !important;
+}
+
+.delete-error-confirm-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.6),
+    inset -6px -6px 12px rgba(179, 4, 34, 0.3),
+    inset 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  background: linear-gradient(145deg, #8a0219, #9a031e) !important;
+}
+
+.delete-error-modal .swal2-icon.swal2-error {
+  border: none !important;
+  background: linear-gradient(145deg, #050505, #000000) !important;
+  box-shadow: 
+    -8px -8px 16px rgba(89, 112, 129, 0.2),
+    8px 8px 16px rgba(0, 0, 0, 0.8),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 4px rgba(89, 112, 129, 0.1) !important;
+}
+
+.delete-error-modal .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+  background-color: #9a031e !important;
+}
+
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+
+@keyframes swal2FadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.swal2-show {
+  animation: swal2FadeIn 0.2s ease !important;
+}
+
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 640px) {
+  .swal2-popup {
+    width: 90% !important;
+    padding: 20px !important;
+  }
+
+  .error-alert-title,
+  .warning-alert-title,
+  .success-alert-title,
+  .info-alert-title,
+  .playlist-delete-title,
+  .delete-track-title,
+  .delete-account-confirm-title,
+  .delete-account-input-title,
+  .delete-cancelled-title,
+  .delete-success-title,
+  .delete-error-title {
+    font-size: 18px !important;
+  }
+
+  .error-alert-confirm-btn,
+  .warning-alert-confirm-btn,
+  .success-alert-confirm-btn,
+  .info-alert-confirm-btn,
+  .playlist-delete-confirm-btn,
+  .playlist-delete-cancel-btn,
+  .delete-track-confirm-btn,
+  .delete-track-cancel-btn,
+  .delete-account-confirm-btn,
+  .delete-account-cancel-btn,
+  .delete-account-input-confirm-btn,
+  .delete-account-input-cancel-btn,
+  .delete-cancelled-confirm-btn,
+  .delete-success-confirm-btn,
+  .delete-error-confirm-btn {
+    font-size: 13px !important;
+    padding: 8px 20px !important;
+  }
+
+  .delete-account-input-field {
+    font-size: 13px !important;
+    padding: 10px 16px !important;
+  }
+}
