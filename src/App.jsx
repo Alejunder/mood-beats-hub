@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { useLocation } from "react-router-dom";
-import { getCurrentSession, onAuthStateChange } from "./services/authService";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getCurrentSession, onAuthStateChange, signOut } from "./services/authService";
 import { useSpotifyTokens } from "./hooks/useSpotifyTokens";
 import { validateCurrentUserIntent } from "./services/authIntentService";
 import { validateAuthIntentSimple } from "./services/authIntentServiceSimple";
@@ -25,6 +25,7 @@ function App() {
   const [isPlayerMinimized, setIsPlayerMinimized] = useState(false);
   const [playingPlaylist, setPlayingPlaylist] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
   
   // Hook para obtener tokens de Spotify (guardados automáticamente por el trigger)
   const { 
@@ -174,8 +175,8 @@ function App() {
               
               // Si el backend indica logout, cerrar sesión
               if (validation.should_logout) {
-                await supabase.auth.signOut();
-                window.location.replace('/login');
+                await signOut();
+                navigate('/login', { replace: true });
               }
               
               return;
