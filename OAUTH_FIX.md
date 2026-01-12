@@ -6,17 +6,16 @@ El flujo OAuth con Spotify fallaba **exclusivamente en producción** (Vercel) de
 
 ### Causa Raíz
 
-**Vercel no garantiza que `index.html` se sirva correctamente durante callbacks OAuth cuando se usa `rewrites`.**
+**Race condition entre la inicialización de React y el procesamiento del callback OAuth por Supabase.**
 
-Cuando Spotify redirige de vuelta a la app con parámetros OAuth (hash o query params), Vercel debe servir el `index.html` de la SPA **inmediatamente** para que React Router y Supabase procesen el callback. Con `rewrites`, este fallback no está garantizado en el edge de Vercel durante navegación OAuth.
+Cuando Spotify redirige de vuelta a la app con parámetros OAuth (hash o query params), React se inicializa y Supabase intenta procesar los tokens simultáneamente. Si React verifica la sesión antes de que Supabase termine de procesar el callback, se produce un estado inconsistente que causa errores.
 
 ---
 
 ## ✅ La Solución
 
-### 1. **Cambiar de `rewrites` a `routes` en vercel.json**
+### 1. **Optimizar `vercel.json` con `rewrites` + headers de cache**
 
-**Antes:**
 ```json
 {
   "rewrites": [
@@ -24,29 +23,34 @@ Cuando Spotify redirige de vuelta a la app con parámetros OAuth (hash o query p
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
-}
-```
-
-**Después:**
-```json
-{
-  "routes": [
+  ],
+  "headers": [
     {
-      "handle": "filesystem"
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
 ```
 
 **¿Por qué?**
-- `routes` con `handle: filesystem` garantiza que Vercel busque archivos estáticos primero
-- Luego hace fallback a `index.html` para todas las rutas no estáticas
-- Este comportamiento es determinista y funciona correctamente durante callbacks OAuth
+- `rewrites` garantiza que Vercel sirva `index.html` para todas las rutas no estáticas
+- Headers de cache optimizados: `index.html` sin cache, assets con cache largo
+- El problema original era **timing y detección de callback**, no la configuración de routing
 
 ---
 
@@ -186,21 +190,22 @@ auth: {
 ### Síntomas:
 - ❌ 404 después del callback OAuth
 - ❌ Página en blanco
-- ❌ `index.html` no encontrado
+- ❌ Usuario no autenticado después del redirect
 - ❌ Solo en producción (Vercel)
 
 ### Causa:
-- `rewrites` no garantizaba fallback durante callbacks OAuth
-- Vercel edge no servía `index.html` cuando había parámetros OAuth
+- Race condition: React verificaba sesión antes de que Supabase procesara el callback
+- No se daba tiempo suficiente para que Supabase JS SDK procesara los tokens
+- URL no se limpiaba después del login (parámetros OAuth visibles)
 
 ---
 
 ## 📝 Checklist de Implementación
-
-- [x] Cambiar `rewrites` a `routes` en `vercel.json`
-- [x] Agregar headers de cache en `vercel.json`
-- [x] Detectar callbacks OAuth en `App.jsx`
+Optimizar `vercel.json` con rewrites y headers de cache
+- [x] Detectar callbacks OAuth explícitamente en `App.jsx`
+- [x] Agregar delay de 1 segundo para procesamiento de tokens
 - [x] Limpiar URL después de login exitoso
+- [x] Simplificar `LoginTemplate.jsx` eliminando duplicaciónitoso
 - [x] Simplificar `LoginTemplate.jsx`
 - [x] Optimizar config de Supabase
 - [x] Eliminar logs de debug innecesarios
