@@ -72,39 +72,37 @@ function App() {
 
 
   useEffect(() => {
-    // Verificar sesión actual y manejar OAuth redirect con reintentos para iOS
+    // Inicializar auth: verificar sesión existente o esperar callback OAuth
     const initializeAuth = async () => {
-      let attempts = 0;
-      const maxAttempts = 3;
-      
-      while (attempts < maxAttempts) {
-        try {
-          // Pequeño delay para iOS Safari
-          if (attempts > 0) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-          
-          const result = await getCurrentSession();
-          
-          if (result.success && result.data) {
-            console.log('✅ Sesión encontrada en intento:', attempts + 1);
-            setUser(result.data.user);
-            setLoading(false);
-            return;
-          }
-          
-          if (!result.success) {
-            console.error('Error obteniendo sesión:', result.error);
-          }
-          
-          attempts++;
-        } catch (error) {
-          console.error('Error en inicialización de auth:', error);
-          attempts++;
+      try {
+        // Verificar si estamos en medio de un callback OAuth
+        const hasOAuthParams = window.location.hash.includes('access_token') || 
+                               window.location.search.includes('code=') ||
+                               window.location.hash.includes('error');
+        
+        if (hasOAuthParams) {
+          console.log('🔄 Callback OAuth detectado, esperando procesamiento...');
+          // Dar tiempo para que Supabase procese el callback
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
+        
+        const result = await getCurrentSession();
+        
+        if (result.success && result.data) {
+          console.log('✅ Sesión encontrada');
+          setUser(result.data.user);
+          setLoading(false);
+          return;
+        }
+        
+        if (!result.success) {
+          console.log('ℹ️ No hay sesión activa:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ Error en inicialización de auth:', error);
       }
       
-      // Si no hay sesión después de los intentos
+      // Si no hay sesión, dejar loading false para mostrar login
       setUser(null);
       setLoading(false);
     };
@@ -117,6 +115,12 @@ function App() {
       
       if (event === 'SIGNED_IN' && session) {
         console.log('✅ Usuario autenticado:', session.user.email);
+        
+        // Limpiar parámetros OAuth de la URL sin recargar
+        if (window.location.hash.includes('access_token') || window.location.search.includes('code=')) {
+          console.log('🧹 Limpiando parámetros OAuth de la URL');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
         
         // Verificar el modo de autenticación (login/signup) y validar con el backend
         const authMode = localStorage.getItem('authMode');

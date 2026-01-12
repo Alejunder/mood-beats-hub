@@ -12,53 +12,22 @@ export function LoginTemplate() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Verificar si hay errores de validación de auth
+    // Verificar si hay errores de validación de auth desde localStorage
     const authError = localStorage.getItem('authError');
     if (authError) {
       // authError es la key de traducción (ej: 'accountExistsPleaseLogin')
       setError(t(authError));
       localStorage.removeItem('authError');
     }
-    
-    // Verificar si hay errores en la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlHash = window.location.hash;
-    
-    const errorParam = urlParams.get('error') || (urlHash ? new URLSearchParams(urlHash.substring(1)).get('error') : null);
-    const errorDescription = urlParams.get('error_description') || (urlHash ? new URLSearchParams(urlHash.substring(1)).get('error_description') : null);
-    
-    if (errorParam) {
-      // Mostrar el error al usuario
-      if (errorDescription) {
-        const decodedError = decodeURIComponent(errorDescription.replace(/\+/g, ' '));
-        setError(`Error: ${decodedError}`);
-      } else {
-        setError('Error de autenticación. Por favor, intenta de nuevo.');
-      }
-      
-      // Limpiar la URL sin recargar la página
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      // Limpiar el authMode del localStorage
-      localStorage.removeItem('authMode');
-      
-      // Asegurarse de cerrar cualquier sesión
-      supabase.auth.signOut();
-    }
   }, [t]);
 
   useEffect(() => {
-    // Escuchar cambios de autenticación
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      // Si hay un error de autenticación o se cierra sesión, restablecer estados
+    // Escuchar cambios de autenticación para resetear estados de loading
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
+      // Resetear estados de loading si se cierra sesión
       if (event === 'SIGNED_OUT') {
         setLoading(false);
         setLoadingSignup(false);
-      }
-      
-      // Si se inicia sesión exitosamente, limpiar el authMode
-      if (event === 'SIGNED_IN' && session) {
-        localStorage.removeItem('authMode');
       }
     });
 
@@ -83,8 +52,8 @@ export function LoginTemplate() {
           scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
           skipBrowserRedirect: false,
           queryParams: {
-            prompt: 'login',
-            show_dialog: 'false', // No forzar diálogo para login
+            // No forzar diálogo de selección de cuenta en login
+            show_dialog: 'false',
           },
         },
       });
