@@ -72,24 +72,32 @@ function App() {
 
 
   useEffect(() => {
-    // Inicializar auth: verificar sesión existente o esperar callback OAuth
+    // Inicializar auth: dejar que Supabase procese el callback automáticamente
+    // NO llamar a getCurrentSession si hay un callback en proceso
     const initializeAuth = async () => {
       try {
-        // Verificar si estamos en medio de un callback OAuth
-        const hasOAuthParams = window.location.hash.includes('access_token') || 
-                               window.location.search.includes('code=') ||
-                               window.location.hash.includes('error');
+        // Verificar si hay un callback OAuth en proceso (marcado desde index.html)
+        const oauthCallbackDetected = sessionStorage.getItem('oauth_callback_detected');
         
-        if (hasOAuthParams) {
-          console.log('🔄 Callback OAuth detectado, esperando procesamiento...');
-          // Dar tiempo para que Supabase procese el callback
-          await new Promise(resolve => setTimeout(resolve, 1000));
+        if (oauthCallbackDetected === 'true') {
+          console.log('🔄 Callback OAuth detectado - Dejando que Supabase lo procese automáticamente');
+          
+          // Limpiar marcadores
+          sessionStorage.removeItem('oauth_callback_detected');
+          sessionStorage.removeItem('oauth_callback_timestamp');
+          
+          // NO llamar a getCurrentSession - dejar que onAuthStateChange lo maneje
+          // Supabase ya está procesando el callback con detectSessionInUrl: true
+          console.log('⏳ Esperando evento SIGNED_IN de onAuthStateChange...');
+          setLoading(true);
+          return; // Salir y dejar que onAuthStateChange maneje la sesión
         }
         
+        // Solo verificar sesión si NO hay callback en proceso
         const result = await getCurrentSession();
         
         if (result.success && result.data) {
-          console.log('✅ Sesión encontrada');
+          console.log('✅ Sesión existente encontrada');
           setUser(result.data.user);
           setLoading(false);
           return;
@@ -117,9 +125,16 @@ function App() {
         console.log('✅ Usuario autenticado:', session.user.email);
         
         // Limpiar parámetros OAuth de la URL sin recargar
-        if (window.location.hash.includes('access_token') || window.location.search.includes('code=')) {
+        const urlHasOAuthParams = window.location.hash.includes('access_token') || 
+                                  window.location.search.includes('code=') ||
+                                  window.location.hash.includes('error');
+        
+        if (urlHasOAuthParams) {
           console.log('🧹 Limpiando parámetros OAuth de la URL');
-          window.history.replaceState({}, document.title, window.location.pathname);
+          
+          // Limpiar tanto query params como hash
+          const cleanUrl = window.location.origin + window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
         }
         
         // Verificar el modo de autenticación (login/signup) y validar con el backend
@@ -213,7 +228,7 @@ function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   // 🔄 Listener para refrescar token cuando expire (disparado por spotifyService)
   useEffect(() => {

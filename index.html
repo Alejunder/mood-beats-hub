@@ -5,6 +5,23 @@
     <link rel="icon" type="image/png" href="/moodlogo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MoodBeatsHub</title>
+    
+    <!-- Pre-inicialización de Supabase para detectar callbacks OAuth ANTES de React -->
+    <script type="module">
+      // Verificar si estamos en medio de un callback OAuth
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlHash = window.location.hash;
+      const hasCode = urlParams.has('code');
+      const hasAccessToken = urlHash.includes('access_token');
+      const hasError = urlParams.has('error') || urlHash.includes('error');
+      
+      if (hasCode || hasAccessToken || hasError) {
+        console.log('🔄 Callback OAuth detectado en index.html - Preludio');
+        // Marcar que hay un callback en proceso
+        sessionStorage.setItem('oauth_callback_detected', 'true');
+        sessionStorage.setItem('oauth_callback_timestamp', Date.now().toString());
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -8,11 +8,13 @@ export const supabase = createClient(
             storage: window.localStorage,
             autoRefreshToken: true,
             persistSession: true,
-            detectSessionInUrl: true,
-            flowType: 'pkce',
+            detectSessionInUrl: true, // Detectar automáticamente callbacks OAuth
+            flowType: 'pkce', // Usar flujo PKCE (más seguro)
             storageKey: 'supabase.auth.token',
-            // Configuración optimizada para callbacks OAuth
-            debug: false // Solo activar en desarrollo si es necesario
+            debug: false
         }
     }
 )
+
+// Log inicial para debugging
+console.log('🔧 Supabase client inicializado con detectSessionInUrl: true, flowType: pkce');
