@@ -90,6 +90,26 @@ function App() {
           // Supabase ya está procesando el callback con detectSessionInUrl: true
           console.log('⏳ Esperando evento SIGNED_IN de onAuthStateChange...');
           setLoading(true);
+          
+          // Timeout de seguridad: si después de 10 segundos no hay evento SIGNED_IN,
+          // verificar manualmente la sesión
+          const timeoutId = setTimeout(async () => {
+            console.warn('⚠️ Timeout esperando SIGNED_IN, verificando sesión manualmente...');
+            const result = await getCurrentSession();
+            
+            if (result.success && result.data) {
+              console.log('✅ Sesión encontrada después de timeout');
+              setUser(result.data.user);
+            } else {
+              console.error('❌ No hay sesión después de callback OAuth');
+              setUser(null);
+            }
+            setLoading(false);
+          }, 10000);
+          
+          // Guardar el timeoutId en un ref o variable para limpiarlo si llega SIGNED_IN
+          window._authTimeoutId = timeoutId;
+          
           return; // Salir y dejar que onAuthStateChange maneje la sesión
         }
         
@@ -123,6 +143,12 @@ function App() {
       
       if (event === 'SIGNED_IN' && session) {
         console.log('✅ Usuario autenticado:', session.user.email);
+        
+        // Limpiar el timeout de seguridad si existe
+        if (window._authTimeoutId) {
+          clearTimeout(window._authTimeoutId);
+          delete window._authTimeoutId;
+        }
         
         // Limpiar parámetros OAuth de la URL sin recargar
         const urlHasOAuthParams = window.location.hash.includes('access_token') || 
@@ -222,6 +248,35 @@ function App() {
       } else if (event === 'SIGNED_OUT') {
         console.log('❌ Usuario desconectado');
         setUser(null);
+      } else if (event === 'INITIAL_SESSION') {
+        // Si es INITIAL_SESSION sin sesión durante un callback OAuth, es un error
+        if (!session && window._authTimeoutId) {
+          console.error('❌ INITIAL_SESSION sin sesión durante callback OAuth - callback falló');
+          
+          // Limpiar timeout de seguridad
+          clearTimeout(window._authTimeoutId);
+          delete window._authTimeoutId;
+          
+          // Verificar si hay error en la URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlHash = window.location.hash;
+          const hasError = urlParams.get('error') || urlHash.includes('error');
+          
+          if (hasError) {
+            const errorDescription = urlParams.get('error_description') || 'Error en autenticación OAuth';
+            console.error('❌ Error OAuth en URL:', errorDescription);
+            localStorage.setItem('authError', 'errorConnectingSpotify');
+          }
+          
+          // Limpiar URL y terminar loading
+          const cleanUrl = window.location.origin + window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+          
+          setUser(null);
+          setLoading(false);
+        } else {
+          setUser(session?.user ?? null);
+        }
       } else {
         setUser(session?.user ?? null);
       }

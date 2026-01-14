@@ -45,9 +45,15 @@ export function LoginTemplate() {
       localStorage.setItem('authMode', 'login');
       localStorage.setItem('authTimestamp', Date.now().toString());
 
+      // Construir redirectTo explícitamente
+      const baseUrl = window.location.origin;
+      const redirectTo = `${baseUrl}/`;
+      
+      console.log('🔐 Iniciando login con redirectTo:', redirectTo);
+
       const result = await signInWithOAuth({
         provider: "spotify",
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: redirectTo,
         options: {
           scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
           skipBrowserRedirect: false,
@@ -58,13 +64,14 @@ export function LoginTemplate() {
         },
       });
 
-      if (!result.success) throw new Error(result.error);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
     } catch (error) {
       console.error(t('loginError'), error);
       setError(t('errorConnectingSpotify'));
       localStorage.removeItem('authMode');
       localStorage.removeItem('authTimestamp');
-    } finally {
       setLoading(false);
     }
   };
@@ -78,9 +85,15 @@ export function LoginTemplate() {
       localStorage.setItem('authMode', 'signup');
       localStorage.setItem('authTimestamp', Date.now().toString());
 
+      // Construir redirectTo explícitamente
+      const baseUrl = window.location.origin;
+      const redirectTo = `${baseUrl}/`;
+      
+      console.log('🔐 Iniciando signup con redirectTo:', redirectTo);
+
       const result = await signInWithOAuth({
         provider: "spotify",
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: redirectTo,
         options: {
           scopes: "user-read-email user-read-private user-top-read user-read-recently-played playlist-read-private playlist-modify-public user-library-read streaming playlist-modify-private",
           skipBrowserRedirect: false,
@@ -90,13 +103,14 @@ export function LoginTemplate() {
         },
       });
 
-      if (!result.success) throw new Error(result.error);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
     } catch (error) {
       console.error(t('signupError'), error);
       setError(t('errorConnectingSpotify'));
       localStorage.removeItem('authMode');
       localStorage.removeItem('authTimestamp');
-    } finally {
       setLoadingSignup(false);
     }
   };

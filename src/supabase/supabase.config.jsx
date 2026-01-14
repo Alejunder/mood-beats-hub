@@ -11,10 +11,18 @@ export const supabase = createClient(
             detectSessionInUrl: true, // Detectar automáticamente callbacks OAuth
             flowType: 'pkce', // Usar flujo PKCE (más seguro)
             storageKey: 'supabase.auth.token',
-            debug: false
+            debug: true // Activar debug para ver qué está pasando
         }
     }
 )
 
 // Log inicial para debugging
 console.log('🔧 Supabase client inicializado con detectSessionInUrl: true, flowType: pkce');
+
+// Verificar configuración
+if (!import.meta.env.VITE_APP_SUPABASE_URL || !import.meta.env.VITE_APP_SUPABASE_ANON_KEY) {
+    console.error('❌ ERROR CRÍTICO: Variables de entorno de Supabase no configuradas');
+    console.error('Verifica que .env contenga:');
+    console.error('- VITE_APP_SUPABASE_URL');
+    console.error('- VITE_APP_SUPABASE_ANON_KEY');
+}
