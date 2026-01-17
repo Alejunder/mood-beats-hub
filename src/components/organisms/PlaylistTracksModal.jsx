@@ -5,18 +5,36 @@ import { showErrorAlert } from '../molecules/AlertModal';
 import { showConfirmDeleteTrack } from '../molecules/ConfirmDeleteTrackModal';
 import './styles/PlaylistTracksModal.css';
 
-export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessToken, onTracksUpdated }) {
+export function PlaylistTracksModal({ 
+  isOpen, 
+  onClose, 
+  playlist, 
+  playlistId,
+  playlistName,
+  playlistDescription,
+  playlistImageUrl,
+  playlistSpotifyUrl,
+  spotifyAccessToken, 
+  onTracksUpdated 
+}) {
   const { t } = useLanguage();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deletingTrackUri, setDeletingTrackUri] = useState(null);
 
+  // Usar las props individuales si están disponibles, sino usar el objeto playlist
+  const spotifyPlaylistId = playlistId || playlist?.spotify_playlist_id;
+  const name = playlistName || playlist?.name;
+  const description = playlistDescription || playlist?.description;
+  const imageUrl = playlistImageUrl || playlist?.image_url;
+  const spotifyUrl = playlistSpotifyUrl || playlist?.spotify_url;
+
   useEffect(() => {
-    if (isOpen && playlist && spotifyAccessToken) {
+    if (isOpen && spotifyPlaylistId && spotifyAccessToken) {
       loadTracks();
     }
-  }, [isOpen, playlist, spotifyAccessToken]);
+  }, [isOpen, spotifyPlaylistId, spotifyAccessToken]);
 
   const loadTracks = async () => {
     try {
@@ -24,7 +42,7 @@ export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessTo
       setError(null);
 
       const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlist.spotify_playlist_id}/tracks`,
+        `https://api.spotify.com/v1/playlists/${spotifyPlaylistId}/tracks`,
         {
           headers: {
             'Authorization': `Bearer ${spotifyAccessToken}`
@@ -79,7 +97,7 @@ export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessTo
       setDeletingTrackUri(track.uri);
 
       const response = await fetch(
-        `https://api.spotify.com/v1/playlists/${playlist.spotify_playlist_id}/tracks`,
+        `https://api.spotify.com/v1/playlists/${spotifyPlaylistId}/tracks`,
         {
           method: 'DELETE',
           headers: {
@@ -122,16 +140,16 @@ export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessTo
         {/* Header */}
         <div className="tracks-modal-header">
           <div className="tracks-header-info">
-            {playlist.image_url && (
+            {imageUrl && (
               <img 
-                src={playlist.image_url} 
-                alt={playlist.name}
+                src={imageUrl} 
+                alt={name}
                 className="tracks-playlist-cover"
               />
             )}
             <div className="tracks-playlist-details">
-              <h2>{playlist.name}</h2>
-              <p className="tracks-playlist-desc">{playlist.description || t('customPlaylist')}</p>
+              <h2>{name}</h2>
+              <p className="tracks-playlist-desc">{description || t('customPlaylist')}</p>
               <p className="tracks-playlist-count">
                 {tracks.length} {t('songs')}
               </p>
@@ -185,11 +203,7 @@ export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessTo
                   >
                     <div className="track-number">{index + 1}</div>
                     
-                    <div 
-                      className="track-info"
-                      onClick={() => openInSpotify(track.uri)}
-                      style={{ cursor: 'pointer' }}
-                    >
+                    <div className="track-info">
                       <div className="track-cover">
                         {track.album?.images?.[2]?.url ? (
                           <img src={track.album.images[2].url} alt={track.name} />
@@ -205,27 +219,15 @@ export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessTo
                       </div>
                     </div>
 
-                    <div 
-                      className="track-album"
-                      onClick={() => openInSpotify(track.uri)}
-                      style={{ cursor: 'pointer' }}
-                    >
+                    <div className="track-album">
                       {track.album?.name || '-'}
                     </div>
 
-                    <div 
-                      className="track-date"
-                      onClick={() => openInSpotify(track.uri)}
-                      style={{ cursor: 'pointer' }}
-                    >
+                    <div className="track-date">
                       {item.added_at ? formatDate(item.added_at) : '-'}
                     </div>
 
-                    <div 
-                      className="track-duration"
-                      onClick={() => openInSpotify(track.uri)}
-                      style={{ cursor: 'pointer' }}
-                    >
+                    <div className="track-duration">
                       {formatDuration(track.duration_ms)}
                     </div>
 
@@ -266,7 +268,7 @@ export function PlaylistTracksModal({ isOpen, onClose, playlist, spotifyAccessTo
               <span>🎵 {tracks.length} {t('songs')}</span>
               <span>⏱️ {Math.floor(tracks.reduce((acc, item) => acc + (item.track?.duration_ms || 0), 0) / 60000)} min</span>
             </div>
-            <button className="tracks-open-spotify-btn" onClick={() => window.open(playlist.spotify_url, '_blank')}>
+            <button className="tracks-open-spotify-btn" onClick={() => window.open(spotifyUrl, '_blank')}>
               <span>🔗</span>
               {t('openInSpotify')}
             </button>

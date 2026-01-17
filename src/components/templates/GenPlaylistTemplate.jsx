@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../services/authService';
 import { supabase } from '../../supabase/supabase.config';
@@ -401,6 +401,32 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
     }
   };
 
+  const handleTracksUpdated = async () => {
+    // Actualizar información de la playlist después de eliminar canciones
+    if (!generatedPlaylist || !spotifyAccessToken) return;
+
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/playlists/${generatedPlaylist.id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${spotifyAccessToken}`
+          }
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedPlaylist(prev => ({
+          ...prev,
+          tracks: data.tracks?.total || prev.tracks
+        }));
+      }
+    } catch (err) {
+      console.warn('⚠️ Error actualizando información de la playlist:', err);
+    }
+  };
+
   if (loading || tokensLoading) {
     return (
       <div className="mood-container">
@@ -614,14 +640,13 @@ export function SelectMoodTemplate({ spotifyAccessToken, tokensLoading }) {
         <PlaylistTracksModal
           isOpen={showTracksModal}
           onClose={() => setShowTracksModal(false)}
-          playlist={{
-            spotify_playlist_id: generatedPlaylist.id,
-            name: generatedPlaylist.name,
-            description: generatedPlaylist.description,
-            image_url: generatedPlaylist.imageUrl,
-            spotify_url: generatedPlaylist.spotifyUrl
-          }}
+          playlistId={generatedPlaylist.id}
+          playlistName={generatedPlaylist.name}
+          playlistDescription={generatedPlaylist.description}
+          playlistImageUrl={generatedPlaylist.imageUrl}
+          playlistSpotifyUrl={generatedPlaylist.spotifyUrl}
           spotifyAccessToken={spotifyAccessToken}
+          onTracksUpdated={handleTracksUpdated}
         />
       )}
     </div>
